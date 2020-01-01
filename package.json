@@ -1,5 +1,5 @@
 {
-  "name": "asciidoctor-pdf",
+  "name": "antora-pdf",
   "version": "1.0.0-alpha.4",
   "description": "A PDF converter for AsciiDoc based on Asciidoctor.js",
   "engines": {
@@ -32,6 +32,18 @@
   },
   "homepage": "https://github.com/Mogztter/asciidoctor-pdf.js#readme",
   "dependencies": {
+    "@antora/asciidoc-loader": "2.3.0-alpha.2",
+    "@antora/cli": "2.3.0-alpha.2",
+    "@antora/content-aggregator": "2.3.0-alpha.2",
+    "@antora/content-classifier": "2.3.0-alpha.2",
+    "@antora/document-converter": "2.3.0-alpha.2",
+    "@antora/navigation-builder": "2.3.0-alpha.2",
+    "@antora/page-composer": "2.3.0-alpha.2",
+    "@antora/playbook-builder": "2.3.0-alpha.2",
+    "@antora/redirect-producer": "2.3.0-alpha.2",
+    "@antora/site-mapper": "2.3.0-alpha.2",
+    "@antora/site-publisher": "2.3.0-alpha.2",
+    "@antora/ui-loader": "2.3.0-alpha.2",
     "@asciidoctor/cli": "3.0.2",
     "@fortawesome/fontawesome-svg-core": "1.2.8",
     "@fortawesome/free-brands-svg-icons": "5.11.2",
@@ -45,6 +57,7 @@
     "pagedjs": "0.1.35",
     "pdf-lib": "^1.2.1",
     "puppeteer": "2.0.0",
+    "vinyl": "2.2.0",
     "yargs": "13.2.2"
   },
   "devDependencies": {
