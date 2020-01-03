@@ -49,6 +49,7 @@
     "@fortawesome/free-brands-svg-icons": "5.11.2",
     "@fortawesome/free-regular-svg-icons": "5.11.2",
     "@fortawesome/free-solid-svg-icons": "5.11.2",
+    "cheerio": "^1.0.0-rc.3",
     "chokidar": "2.0.4",
     "file-url": "3.0.0",
     "fs-extra": "7.0.1",
