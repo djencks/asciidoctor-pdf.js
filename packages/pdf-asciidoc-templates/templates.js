@@ -193,14 +193,14 @@ const titlePage = (node) => {
 /**
  * Generate an (hidden) outline otherwise Chrome won't generate "Dests" fields and we won't be able to generate a PDF outline.
  */
-const outline = (node, baseConverter) => {
+const outline = (baseConverter, node, transform, opts) => {
   if (baseConverter) {
     return `<div style="display: none;">${baseConverter.$convert_outline(node)}</div>`
   }
   return ''
 }
 
-const tocHeader = (node, baseConverter) => {
+const tocHeader = (baseConverter, node, transform, opts) => {
   if (node.hasHeader()) {
     const tocPlacement = node.getAttribute('toc-placement', 'auto')
     // Add a toc in the header if the toc placement is auto (default), left or right
@@ -215,8 +215,9 @@ ${baseConverter.$convert_outline(node)}
   return ''
 }
 
-module.exports = {
-  document: (node, baseConverter) => {
+module.exports = (baseConverter, {file, contentCatalog, config}) => {
+  return {
+  document: (node, transform, opts) => {
     const cdnBaseUrl = `${assetUriScheme(node)}//cdnjs.cloudflare.com/ajax/libs`
     const linkcss = node.isAttribute('linkcss')
     const contentHTML = `<div id="content" class="content">
@@ -249,8 +250,8 @@ ${syntaxHighlighterHead(node, syntaxHighlighter, { cdn_base_url: cdnBaseUrl, lin
 </head>
 <body ${bodyAttrs.join(' ')}>
 ${titlePage(node)}
-${outline(node, baseConverter)}
-${tocHeader(node, baseConverter)}
+${outline(baseConverter, node, transform, opts)}
+${tocHeader(baseConverter, node, transform, opts)}
 ${contentHTML}
 ${footnotes(node)}
 ${syntaxHighlighterFooter(node, syntaxHighlighter, { cdn_base_url: cdnBaseUrl, linkcss: linkcss, self_closing_tag_slash: '/' })}
@@ -263,7 +264,7 @@ ${repeatTableHeadersContent}
 </body>
 </html>`
   },
-  admonition: (node) => {
+  admonition: (node, transform, opts) => {
     const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
     const name = node.getAttribute('name')
     const titleElement = node.getTitle() ? `<div class="title">${node.getTitle()}</div>\n` : ''
@@ -304,10 +305,10 @@ ${titleElement}${node.getContent()}
 </table>
 </div>`
   },
-  inline_callout: (node) => {
+  inline_callout: (node, transform, opts) => {
     return `<i class="conum" data-value="${node.text}"></i>`
   },
-  inline_image: (node, baseConverter) => {
+  inline_image: (node, transform, opts) => {
     if (node.getType() === 'icon' && isSvgIconEnabled(node)) {
       const transform = {}
       if (node.hasAttribute('rotate')) {
@@ -349,10 +350,10 @@ ${titleElement}${node.getContent()}
         return icon.html
       }
     } else {
-      return baseConverter.$convert_inline_image(node)
+      return baseConverter.$convert_inline_image(baseConverter, node, transform, opts)
     }
   },
-  colist: (node) => {
+  colist: (node, transform, opts) => {
     const result = []
     const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
     let classes = ['colist']
@@ -401,7 +402,7 @@ ${titleElement}${node.getContent()}
     // Paged.js does not support inline style: https://gitlab.pagedmedia.org/tools/pagedjs/issues/146
     return '<div class="page-break" style="break-after: page;"></div>'
   },
-  preamble: (node, baseConverter) => {
+  preamble: (node, transform, opts) => {
     const doc = node.getDocument()
     let toc
     if (doc.isAttribute('toc-placement', 'preamble') && doc.hasSections() && doc.hasAttribute('toc')) {
@@ -418,4 +419,5 @@ ${node.getContent()}
 </div>${toc}
 </div>`
   }
+}
 }
