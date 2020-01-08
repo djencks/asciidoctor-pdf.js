@@ -8,6 +8,7 @@
   "files": [
     "lib/"
   ],
+  "main": "lib/index.js",
   "scripts": {
     "test": "npm run test:smoke && npm run test:js",
     "test:smoke": "./bin/asciidoctor-pdf --version",
