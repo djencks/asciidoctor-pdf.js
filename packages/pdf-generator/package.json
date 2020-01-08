@@ -1,0 +1,49 @@
+{
+  "name": "@antora-pdf/pdf-generator",
+  "version": "1.0.0-alpha.4",
+  "description": "A PDF converter for AsciiDoc based on Asciidoctor.js",
+  "engines": {
+    "node": ">=8.11.0"
+  },
+  "files": [
+    "lib/"
+  ],
+  "scripts": {
+    "test": "npm run test:smoke && npm run test:js",
+    "test:smoke": "./bin/asciidoctor-pdf --version",
+    "test:js": "mocha test/**_test.js",
+    "lint": "standard lib/**/**.js test/**/**.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mogztter/asciidoctor-pdf.js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mogztter/asciidoctor-pdf.js/issues"
+  },
+  "homepage": "https://github.com/Mogztter/asciidoctor-pdf.js#readme",
+  "dependencies": {
+    "@antora/asciidoc-loader": "2.3.0-alpha.2",
+    "@antora/content-aggregator": "2.3.0-alpha.2",
+    "@antora/content-classifier": "2.3.0-alpha.2",
+    "@antora/document-converter": "2.3.0-alpha.2",
+    "@antora/navigation-builder": "2.3.0-alpha.2",
+    "@antora/page-composer": "2.3.0-alpha.2",
+    "@antora/playbook-builder": "2.3.0-alpha.2",
+    "@antora/site-publisher": "2.3.0-alpha.2",
+    "@antora/ui-loader": "2.3.0-alpha.2",
+    "@antora-pdf/pdf-renderer": "1.0.0-alpha.4"
+  },
+  "devDependencies": {
+    "chai": "4.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "dirty-chai": "2.0.1",
+    "mocha": "6.2.0",
+    "pixelmatch": "^5.1.0",
+    "rimraf": "^3.0.0",
+    "standard": "14.1.0"
+  }
+}

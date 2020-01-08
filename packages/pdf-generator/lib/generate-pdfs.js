@@ -11,7 +11,8 @@ const loadUi = require('@antora/ui-loader')
 // const produceRedirects = require('@antora/redirect-producer')
 const publishSite = require('@antora/site-publisher')
 const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
-const convertToPdf = require('./converter')
+// const { resolveConfig: resolveAsciiDocConfig } = require('./../../../antora/antora/packages/asciidoc-loader')
+const convertToPdf = require('@antora-pdf/pdf-renderer')
 
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)
