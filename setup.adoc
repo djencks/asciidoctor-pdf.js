@@ -12,11 +12,18 @@ Remove or move your node_modules/@antora.
 
 Symlink to the local antora: `ln -s /Users/david/projects/antora/antora/node_modules/@antora node_modules/\@antora`
 
+BEWARE! 
+Whenever you run `lerna bootstrap` here, you'll need to run `lerna clean` and `yarn` in antora!
+`lerna bootstrap` follows the symlink and installs the released version of antora into antora's node_modules.
+
 == set up a way to run your local copy of antora
 
 in e.g. `~/.profile`, `export ANTORA_DEV=~/projects/antora/antora/node_modules/.bin/antora`
 
-== Get the pdf antora-ui-default branch and build it
+== UI
+
+Get the pdf antora-ui-default branch and build it.
+You'll need the path to it for your playbook.
 
 == Set up your playbook
 
@@ -30,3 +37,14 @@ ui:
     snapshot: true
     start_path: pdf
 ----
+
+== Running
+
+A typical command line in this directory:
+ ----
+ $ANTORA_DEV ../../antora/simple-examples/multiple-components/xrefs/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator
+----
+
+== Summary comment
+
+Both the custom elements, the pipeline module and the converter/template module, must be referred to with local file paths.
