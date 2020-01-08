@@ -22,15 +22,15 @@ const faTipIcon = faLayer((push) => {
   push(faIcon(faLightbulb, { transform: { size: 10 }, classes: 'fa-inverse' }))
 })
 
-const repeatTableHeadersContent = fs.readFileSync(`${__dirname}/repeating-table-headers.js`, 'utf8')
-const pagedContent = fs.readFileSync(require.resolve('pagedjs/dist/paged.polyfill.js'), 'utf8')
-const pagedRendering = fs.readFileSync(`${__dirname}/paged-rendering.js`, 'utf8')
-const stylesDirectoryPath = ospath.resolve(`${__dirname}/../../css`)
-const asciidoctorStyleContent = fs.readFileSync(`${stylesDirectoryPath}/asciidoctor.css`, 'utf8')
-const documentStyleContent = fs.readFileSync(`${stylesDirectoryPath}/document.css`, 'utf8')
-const titleDocumentStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/title-document-numbering.css`, 'utf8')
-const titlePageStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/title-page-numbering.css`, 'utf8')
-const bookStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/book.css`, 'utf8')
+// const repeatTableHeadersContent = fs.readFileSync(`${__dirname}/repeating-table-headers.js`, 'utf8')
+// const pagedContent = fs.readFileSync(require.resolve('pagedjs/dist/paged.polyfill.js'), 'utf8')
+// const pagedRendering = fs.readFileSync(`${__dirname}/paged-rendering.js`, 'utf8')
+// const stylesDirectoryPath = ospath.resolve(`${__dirname}/../../css`)
+// const asciidoctorStyleContent = fs.readFileSync(`${stylesDirectoryPath}/asciidoctor.css`, 'utf8')
+// const documentStyleContent = fs.readFileSync(`${stylesDirectoryPath}/document.css`, 'utf8')
+// const titleDocumentStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/title-document-numbering.css`, 'utf8')
+// const titlePageStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/title-page-numbering.css`, 'utf8')
+// const bookStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/book.css`, 'utf8')
 
 const resolveStylesheet = (requirePath, cwd = process.cwd()) => {
   // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
@@ -244,7 +244,6 @@ ${node.getContent()}
 <title>${node.getDocumentTitle({ sanitize: true, use_fallback: true })}</title>
 <meta charset="UTF-8">
 ${fontAwesomeStyle(node)}
-${styles(node)}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 ${syntaxHighlighterHead(node, syntaxHighlighter, { cdn_base_url: cdnBaseUrl, linkcss: linkcss, self_closing_tag_slash: '/' })}
 </head>
@@ -257,9 +256,6 @@ ${footnotes(node)}
 ${syntaxHighlighterFooter(node, syntaxHighlighter, { cdn_base_url: cdnBaseUrl, linkcss: linkcss, self_closing_tag_slash: '/' })}
 ${stemContent.content(node)}
 <script>
-${pagedContent}
-${pagedRendering}
-${repeatTableHeadersContent}
 </script>
 </body>
 </html>`
