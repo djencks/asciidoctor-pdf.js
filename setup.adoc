@@ -1,0 +1,32 @@
+= How to set this up
+
+== setting up this project
+
+lerna bootstrap
+
+Antora must have issue-347-custom-converters applied
+
+Find your antora checkout, say `/Users/david/projects/antora/antora/node_modules/@antora`
+
+Remove or move your node_modules/@antora.
+
+Symlink to the local antora: `ln -s /Users/david/projects/antora/antora/node_modules/@antora node_modules/\@antora`
+
+== set up a way to run your local copy of antora
+
+in e.g. `~/.profile`, `export ANTORA_DEV=~/projects/antora/antora/node_modules/.bin/antora`
+
+== Get the pdf antora-ui-default branch and build it
+
+== Set up your playbook
+
+----
+asciidoc:
+  converters:
+  - './../../../../asciidoctor/asciidoctor-pdf.js/node_modules/@antora-pdf/pdf-asciidoc-templates'
+ui:
+  bundle:
+    url: ./../../../antora-ui-default/build/ui-pdf-bundle.zip
+    snapshot: true
+    start_path: pdf
+----
