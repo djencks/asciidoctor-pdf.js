@@ -1,0 +1,15 @@
+{
+  "npmClient": "npm",
+  "useWorkspaces": true,
+  "version": "1.0.0-alpha.4",
+  "command": {
+    "publish": {
+      "allowBranch": "master",
+      "message": "%s",
+      "npmClient": "npm"
+    }
+  },
+  "packages": [
+    "packages/*"
+  ]
+}
