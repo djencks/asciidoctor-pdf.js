@@ -1,13 +1,10 @@
 {
-  "name": "antora-pdf",
+  "private": true,
   "version": "1.0.0-alpha.4",
   "description": "A PDF converter for AsciiDoc based on Asciidoctor.js",
   "engines": {
     "node": ">=8.11",
     "npm": ">=5.0.0"
-  },
-  "bin": {
-    "asciidoctor-pdf": "bin/asciidoctor-pdf"
   },
   "files": [
     "bin",
@@ -31,47 +28,36 @@
     "url": "https://github.com/Mogztter/asciidoctor-pdf.js/issues"
   },
   "homepage": "https://github.com/Mogztter/asciidoctor-pdf.js#readme",
-  "dependencies": {
-    "@antora/asciidoc-loader": "2.3.0-alpha.2",
-    "@antora/cli": "2.3.0-alpha.2",
-    "@antora/content-aggregator": "2.3.0-alpha.2",
-    "@antora/content-classifier": "2.3.0-alpha.2",
-    "@antora/document-converter": "2.3.0-alpha.2",
-    "@antora/navigation-builder": "2.3.0-alpha.2",
-    "@antora/page-composer": "2.3.0-alpha.2",
-    "@antora/playbook-builder": "2.3.0-alpha.2",
-    "@antora/redirect-producer": "2.3.0-alpha.2",
-    "@antora/site-mapper": "2.3.0-alpha.2",
-    "@antora/site-publisher": "2.3.0-alpha.2",
-    "@antora/ui-loader": "2.3.0-alpha.2",
-    "@asciidoctor/cli": "3.0.2",
-    "@fortawesome/fontawesome-svg-core": "1.2.8",
-    "@fortawesome/free-brands-svg-icons": "5.11.2",
-    "@fortawesome/free-regular-svg-icons": "5.11.2",
-    "@fortawesome/free-solid-svg-icons": "5.11.2",
-    "cheerio": "^1.0.0-rc.3",
-    "chokidar": "2.0.4",
-    "file-url": "3.0.0",
-    "fs-extra": "7.0.1",
-    "html-entities": "^1.2.1",
-    "mathjax": "3.0.0",
-    "pagedjs": "0.1.35",
-    "pdf-lib": "^1.2.1",
-    "puppeteer": "2.0.0",
-    "vinyl": "2.2.0",
-    "yargs": "13.2.2"
-  },
   "devDependencies": {
-    "@asciidoctor/core": "^2.0.0-rc.1",
     "chai": "4.2.0",
     "cheerio": "^1.0.0-rc.3",
     "dirty-chai": "2.0.1",
     "mocha": "6.2.0",
     "pixelmatch": "^5.1.0",
     "rimraf": "^3.0.0",
-    "standard": "14.1.0"
+    "standard": "14.1.0",
+    "eslint": "~6.7",
+    "eslint-config-standard": "~14.1",
+    "eslint-plugin-import": "~2.19",
+    "eslint-plugin-node": "~10.0",
+    "eslint-plugin-promise": "~4.2",
+    "eslint-plugin-standard": "~4.0",
+    "npm-which": "~3.0",
+    "nyc": "~14.1",
+    "plugin-error": "~1.0",
+    "prettier-eslint-cli": "~5.0"
   },
-  "peerDependencies": {
-    "@asciidoctor/core": "^2.0.0-rc.1"
-  }
+  "nyc": {
+    "cache": true,
+    "cacheDir": "node_modules/.cache/nyc",
+    "include": [
+      "packages/*/{bin,lib}/**/*.js"
+    ],
+    "reporter": [
+      "lcov"
+    ]
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
