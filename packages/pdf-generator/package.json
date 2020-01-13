@@ -36,6 +36,7 @@
     "@antora/playbook-builder": "2.3.0-alpha.2",
     "@antora/site-publisher": "2.3.0-alpha.2",
     "@antora/ui-loader": "2.3.0-alpha.2",
+    "@antora-pdf/pdf-asciidoc-templates": "1.0.0-alpha.4",
     "@antora-pdf/pdf-renderer": "1.0.0-alpha.4"
   }
 }

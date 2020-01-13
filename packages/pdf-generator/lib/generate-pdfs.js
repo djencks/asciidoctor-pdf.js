@@ -13,10 +13,11 @@ const publishSite = require('@antora/site-publisher')
 const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
 // const { resolveConfig: resolveAsciiDocConfig } = require('./../../../antora/antora/packages/asciidoc-loader')
 const convertToPdf = require('@antora-pdf/pdf-renderer')
+const pdfTemplate = require('@antora-pdf/pdf-asciidoc-templates')
 
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)
-  const asciidocConfig = resolveAsciiDocConfig(playbook)
+  const asciidocConfig = resolveAsciiDocConfig(playbook, [], [pdfTemplate])
   const [contentCatalog, uiCatalog] = await Promise.all([
     aggregateContent(playbook).then((contentAggregate) => classifyContent(playbook, contentAggregate, asciidocConfig)),
     loadUi(playbook),
