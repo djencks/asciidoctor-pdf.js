@@ -27,12 +27,14 @@ const server = require('./server')
 
 async function convertToPdf (pages, catalogs) {
   const {browser, server} = await setup(catalogs)
+  let result
   try {
-    await Promise.all(pages.map((file) => convert(file, browser)))
+    result = await Promise.all(pages.map((file) => convert(file, browser)))
   } finally {
     await browser.close()
     await server.close()
   }
+  return result
 }
 
 async function setup (catalogs) {
@@ -98,10 +100,14 @@ async function convert(file, browser) {
     pdfDoc = await addOutline(pdfDoc, htmldoc, attributes)
     pdfDoc = await addMetadata(pdfDoc, attributes)
     pdf = await pdfDoc.save()
-    file.contents = Buffer.from(pdf)
-    file.out.path = file.out.path.slice(0, -4) + 'pdf'
+    const pdfFile = {src: Object.assign({}, file.src)}    
+    pdfFile.src.basename = pdfFile.src.basename.slice(0, -4) + 'pdf'
+    pdfFile.src.mediaType = 'application/pdf'
+    pdfFile.src.family = 'attachment'
+    pdfFile.contents = Buffer.from(pdf)
+    // file.out.path = file.out.path.slice(0, -4) + 'pdf'
     // console.log('read pdf for file: ', file.out)
-    return file
+    return pdfFile
   } finally {
     await page.close()
   }

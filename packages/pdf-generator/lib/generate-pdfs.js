@@ -26,11 +26,14 @@ async function generateSite (args, env) {
   const navigationCatalog = buildNavigation(contentCatalog, asciidocConfig)
   const composePage = createPageComposer(playbook, contentCatalog, uiCatalog, env)
   pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
-  await convertToPdf(pages, [contentCatalog, uiCatalog])
+  const pdfPages = await convertToPdf(pages, [contentCatalog, uiCatalog])
+  pdfPages.map((pdf) => contentCatalog.addFile(pdf))
+  // console.log('pdfPages: ', pdfPages)
   // const siteFiles = mapSite(playbook, pages).concat(produceRedirects(playbook, contentCatalog))
   // if (playbook.site.url) siteFiles.push(composePage(create404Page()))
-  const pageCatalog = { getAll: () => pages }
-  return publishSite(playbook, [pageCatalog])
+  // const pageCatalog = { getAll: () => pages }
+  // const pdfCatalog = {getAll: () => pdfPages}
+  return publishSite(playbook, [contentCatalog, uiCatalog])
 }
 
 module.exports = generateSite
