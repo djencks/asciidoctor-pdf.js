@@ -31,8 +31,9 @@ async function convertToPdf (pages, catalogs) {
   try {
     result = await Promise.all(pages.map((file) => convert(file, browser)))
   } finally {
-    await browser.close()
-    await server.close()
+    console.log('done rendering')
+    // await browser.close()
+    // await server.close()
   }
   return result
 }

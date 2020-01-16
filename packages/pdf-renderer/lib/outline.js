@@ -17,7 +17,6 @@ function getOutline (doc, node, depth) {
     return []
   }
   const sections = doc('h1, h2, h3, h4, h5, h6', node)
-  // console.log('sections', sections.toString())
   const sectionArray = toArray(sections)
   // console.log('sectionArray', sectionArray)
 
@@ -27,7 +26,7 @@ function getOutline (doc, node, depth) {
   var index = 0
 
   function outlineLevel(level) {
-    // console.log('outlineLevel', level)
+    // console.log('outlineLevel: ', level)
     const result = []
     while (index < pruned.length) {
       // console.log(`index: ${index}, level: ${level}`)
@@ -129,10 +128,8 @@ async function addOutline (pdfDoc, htmldoc, attributes) {
   const outlineRef = context.nextRef()
 
   const doc = cheerio.load(htmldoc)
-  const article = doc('article.doc')
-  // console.log('article', article.toString())
+  const article = doc('body')
   const outline = getOutline(doc, article, depth)
-  // console.log('outline', outline)
   if (outline.length === 0) {
     return pdfDoc
   }
