@@ -217,7 +217,39 @@ ${baseConverter.$convert_outline(node)}
 
 module.exports = (baseConverter, {file, contentCatalog, config}) => {
   return {
-  document: (node, transform, opts) => {
+    embedded: (node, transform, opts) => {
+      console.log('transform embedded')
+      // const cdnBaseUrl = `${assetUriScheme(node)}//cdnjs.cloudflare.com/ajax/libs`
+      // const linkcss = node.isAttribute('linkcss')
+  //     const contentHTML = `<div id="content" class="content">
+  // ${node.getContent()}
+  // </div>`
+      // const syntaxHighlighter = node.$syntax_highlighter()
+      const bodyAttrs = node.getId() ? [`id="${node.getId()}"`] : []
+      let classes
+      if (node.hasSections() && node.isAttribute('toc-class') && node.isAttribute('toc') && node.isAttribute('toc-placement', 'auto')) {
+        classes = [node.getDoctype(), node.getAttribute('toc-class'), `toc-${node.getAttribute('toc-position', 'header')}`]
+      } else {
+        classes = [node.getDoctype()]
+      }
+      if (node.hasRole()) {
+        classes.push(node.getRole())
+      }
+      bodyAttrs.push(`class="${classes.join(' ')}"`)
+      if (node.hasAttribute('max-width')) {
+        bodyAttrs.push(`style="max-width: ${node.getAttribute('max-width')};"`)
+      }
+      node.setAttribute('page-pagedjs-body-attrs', bodyAttrs.join(' '))
+      return `${titlePage(node)}
+${outline(baseConverter, node, transform, opts)}
+${tocHeader(baseConverter, node, transform, opts)}
+<div id="content" class="content">
+  ${baseConverter.$convert(node, transform, opts)}
+</div>
+${footnotes(node)}
+${stemContent.content(node)}`      
+    },
+    document: (node, transform, opts) => {
     console.log('transform document')
     const cdnBaseUrl = `${assetUriScheme(node)}//cdnjs.cloudflare.com/ajax/libs`
     const linkcss = node.isAttribute('linkcss')
