@@ -5,35 +5,14 @@ const { addOutline } = require('./outline.js')
 const { addMetadata } = require('./metadata')
 const server = require('./server')
 
-// function registerTemplateConverter (processor, templates) {
-//   class TemplateConverter {
-//     constructor () {
-//       this.baseConverter = processor.Html5Converter.create()
-//       this.templates = templates
-//     }
-
-//     convert (node, transform, opts) {
-//       const template = this.templates[transform || node.node_name]
-//       if (template) {
-//         return template(node, this.baseConverter)
-//       }
-//       return this.baseConverter.convert(node, transform, opts)
-//     }
-//   }
-
-//   processor.ConverterFactory.register(new TemplateConverter(), ['html5'])
-// }
-
-
 async function convertToPdf (pages, catalogs) {
   const {browser, server} = await setup(catalogs)
   let result
   try {
     result = await Promise.all(pages.map((file) => convert(file, browser)))
   } finally {
-    console.log('done rendering')
-    // await browser.close()
-    // await server.close()
+    await browser.close()
+    await server.close()
   }
   return result
 }
@@ -71,11 +50,9 @@ async function convert(file, browser) {
       .on('error', err => {
         console.error('Page crashed: ' + err.toString())
       })
-    // console.log(`loading url: ${url}`)
     await page.goto(url, { waitUntil: 'networkidle0' })
     const watchDog = page.waitForFunction('window.AsciidoctorPDF === undefined || window.AsciidoctorPDF.status === undefined || window.AsciidoctorPDF.status === "ready"')
     await watchDog
-    // console.log(`loaded url: ${url}`)
     const pdfOptions = {
       printBackground: true,
       preferCSSPageSize: true
@@ -106,8 +83,6 @@ async function convert(file, browser) {
     pdfFile.src.mediaType = 'application/pdf'
     pdfFile.src.family = 'attachment'
     pdfFile.contents = Buffer.from(pdf)
-    // file.out.path = file.out.path.slice(0, -4) + 'pdf'
-    // console.log('read pdf for file: ', file.out)
     return pdfFile
   } finally {
     await page.close()

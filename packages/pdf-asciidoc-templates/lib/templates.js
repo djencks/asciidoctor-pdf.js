@@ -218,13 +218,6 @@ ${baseConverter.$convert_outline(node)}
 module.exports = (baseConverter, {file, contentCatalog, config}) => {
   return {
     embedded: (node, transform, opts) => {
-      console.log('transform embedded')
-      // const cdnBaseUrl = `${assetUriScheme(node)}//cdnjs.cloudflare.com/ajax/libs`
-      // const linkcss = node.isAttribute('linkcss')
-  //     const contentHTML = `<div id="content" class="content">
-  // ${node.getContent()}
-  // </div>`
-      // const syntaxHighlighter = node.$syntax_highlighter()
       const bodyAttrs = node.getId() ? [`id="${node.getId()}"`] : []
       let classes
       if (node.hasSections() && node.isAttribute('toc-class') && node.isAttribute('toc') && node.isAttribute('toc-placement', 'auto')) {
@@ -249,51 +242,6 @@ ${tocHeader(baseConverter, node, transform, opts)}
 ${footnotes(node)}
 ${stemContent.content(node)}`      
     },
-    document: (node, transform, opts) => {
-    console.log('transform document')
-    const cdnBaseUrl = `${assetUriScheme(node)}//cdnjs.cloudflare.com/ajax/libs`
-    const linkcss = node.isAttribute('linkcss')
-    const contentHTML = `<div id="content" class="content">
-${node.getContent()}
-</div>`
-    const syntaxHighlighter = node.$syntax_highlighter()
-    const bodyAttrs = node.getId() ? [`id="${node.getId()}"`] : []
-    let classes
-    if (node.hasSections() && node.isAttribute('toc-class') && node.isAttribute('toc') && node.isAttribute('toc-placement', 'auto')) {
-      classes = [node.getDoctype(), node.getAttribute('toc-class'), `toc-${node.getAttribute('toc-position', 'header')}`]
-    } else {
-      classes = [node.getDoctype()]
-    }
-    if (node.hasRole()) {
-      classes.push(node.getRole())
-    }
-    bodyAttrs.push(`class="${classes.join(' ')}"`)
-    if (node.hasAttribute('max-width')) {
-      bodyAttrs.push(`style="max-width: ${node.getAttribute('max-width')};"`)
-    }
-    return `<!DOCTYPE html>
-<html dir="ltr"${langAttr(node)}>
-<head>
-<title>${node.getDocumentTitle({ sanitize: true, use_fallback: true })}</title>
-<meta charset="UTF-8">
-${fontAwesomeStyle(node)}
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-${syntaxHighlighterHead(node, syntaxHighlighter, { cdn_base_url: cdnBaseUrl, linkcss: linkcss, self_closing_tag_slash: '/' })}
-</head>
-<body ${bodyAttrs.join(' ')}>
-${titlePage(node)}
-${outline(baseConverter, node, transform, opts)}
-${tocHeader(baseConverter, node, transform, opts)}
-${contentHTML}
-${footnotes(node)}
-${syntaxHighlighterFooter(node, syntaxHighlighter, { cdn_base_url: cdnBaseUrl, linkcss: linkcss, self_closing_tag_slash: '/' })}
-${stemContent.content(node)}
-<script src="/_/js/vendor/pagedjs.js"/>
-<script src="/_/js/vendor/paged-rendering.js"/>
-<script src="/_/js/vendor/repeating-table-headers.js"/>
-</body>
-</html>`
-  },
   admonition: (node, transform, opts) => {
     const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
     const name = node.getAttribute('name')
@@ -385,7 +333,6 @@ ${titleElement}${node.getContent()}
     }
   },
   colist: (node, transform, opts) => {
-    console.log('transform colist')
     const result = []
     const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
     let classes = ['colist']
@@ -431,12 +378,10 @@ ${titleElement}${node.getContent()}
     return result.join('\n')
   },
   page_break: () => {
-    console.log('transform page_break')
     // Paged.js does not support inline style: https://gitlab.pagedmedia.org/tools/pagedjs/issues/146
     return '<div class="page-break" style="break-after: page;"></div>'
   },
   preamble: (node, transform, opts) => {
-    console.log('transform preamble')
     const doc = node.getDocument()
     let toc
     if (doc.isAttribute('toc-placement', 'preamble') && doc.hasSections() && doc.hasAttribute('toc')) {
@@ -453,9 +398,5 @@ ${node.getContent()}
 </div>${toc}
 </div>`
   },
-  inline_anchor: (node, transform, opts) => {
-    console.log('inline anchor')
-    return baseConverter.$convert(node, transform, opts)
-  }
 }
 }
