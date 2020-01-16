@@ -218,6 +218,7 @@ ${baseConverter.$convert_outline(node)}
 module.exports = (baseConverter, {file, contentCatalog, config}) => {
   return {
   document: (node, transform, opts) => {
+    console.log('transform document')
     const cdnBaseUrl = `${assetUriScheme(node)}//cdnjs.cloudflare.com/ajax/libs`
     const linkcss = node.isAttribute('linkcss')
     const contentHTML = `<div id="content" class="content">
@@ -255,8 +256,9 @@ ${contentHTML}
 ${footnotes(node)}
 ${syntaxHighlighterFooter(node, syntaxHighlighter, { cdn_base_url: cdnBaseUrl, linkcss: linkcss, self_closing_tag_slash: '/' })}
 ${stemContent.content(node)}
-<script>
-</script>
+<script src="/_/js/vendor/pagedjs.js"/>
+<script src="/_/js/vendor/paged-rendering.js"/>
+<script src="/_/js/vendor/repeating-table-headers.js"/>
 </body>
 </html>`
   },
@@ -265,29 +267,30 @@ ${stemContent.content(node)}
     const name = node.getAttribute('name')
     const titleElement = node.getTitle() ? `<div class="title">${node.getTitle()}</div>\n` : ''
     let label
-    if (node.getDocument().hasAttribute('icons')) {
-      if (node.getDocument().isAttribute('icons', 'font') && !node.hasAttribute('icon')) {
-        let icon
-        if (name === 'note') {
-          icon = faNoteIcon
-        } else if (name === 'important') {
-          icon = faImportantIcon
-        } else if (name === 'caution') {
-          icon = faCautionIcon
-        } else if (name === 'tip') {
-          icon = faTipIcon
-        } else if (name === 'warning') {
-          icon = faWarningIcon
-        } else {
-          icon = faDefaultIcon
-        }
-        label = icon.html
-      } else {
-        label = `<img src="${node.getIconUri(name)}" alt="${node.getAttribute('textlabel')}"/>`
-      }
-    } else {
+    //TODO figure out what to do: force text admonition labels for now
+    // if (node.getDocument().hasAttribute('icons')) {
+    //   if (node.getDocument().isAttribute('icons', 'font') && !node.hasAttribute('icon')) {
+    //     let icon
+    //     if (name === 'note') {
+    //       icon = faNoteIcon
+    //     } else if (name === 'important') {
+    //       icon = faImportantIcon
+    //     } else if (name === 'caution') {
+    //       icon = faCautionIcon
+    //     } else if (name === 'tip') {
+    //       icon = faTipIcon
+    //     } else if (name === 'warning') {
+    //       icon = faWarningIcon
+    //     } else {
+    //       icon = faDefaultIcon
+    //     }
+    //     label = icon.html
+    //   } else {
+    //     label = `<img src="${node.getIconUri(name)}" alt="${node.getAttribute('textlabel')}"/>`
+    //   }
+    // } else {
       label = `<div class="title">${node.getAttribute('textlabel')}</div>`
-    }
+    // }
     return `<div${idAttribute} class="admonitionblock ${name}${node.getRole() ? node.getRole() : ''}">
 <table>
 <tr>
@@ -350,6 +353,7 @@ ${titleElement}${node.getContent()}
     }
   },
   colist: (node, transform, opts) => {
+    console.log('transform colist')
     const result = []
     const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
     let classes = ['colist']
@@ -395,10 +399,12 @@ ${titleElement}${node.getContent()}
     return result.join('\n')
   },
   page_break: () => {
+    console.log('transform page_break')
     // Paged.js does not support inline style: https://gitlab.pagedmedia.org/tools/pagedjs/issues/146
     return '<div class="page-break" style="break-after: page;"></div>'
   },
   preamble: (node, transform, opts) => {
+    console.log('transform preamble')
     const doc = node.getDocument()
     let toc
     if (doc.isAttribute('toc-placement', 'preamble') && doc.hasSections() && doc.hasAttribute('toc')) {
@@ -414,6 +420,10 @@ ${baseConverter.$convert_outline(doc)}
 ${node.getContent()}
 </div>${toc}
 </div>`
+  },
+  inline_anchor: (node, transform, opts) => {
+    console.log('inline anchor')
+    return baseConverter.$convert(node, transform, opts)
   }
 }
 }
