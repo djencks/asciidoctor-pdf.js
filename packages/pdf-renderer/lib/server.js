@@ -1,5 +1,4 @@
 const http = require('http')
-// const { contentCatalog } = require('@antora/content-classifier')
 
 function server (catalogs) {
   const site = catalogs.reduce( (accum, catalog) => {catalog.getAll().filter( (file) => file.out).reduce((accum2, file) => {
@@ -12,7 +11,6 @@ function server (catalogs) {
     const file = site[url]
     if (file) {
       const type = file.mediaType
-      // console.log(`server: url: ${url} type: ${type}`)
       resp.writeHead(200, `{content-type: ${type}}`)
       resp.write(file.contents)
       resp.end()

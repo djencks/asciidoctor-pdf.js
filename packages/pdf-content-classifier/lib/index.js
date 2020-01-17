@@ -1,11 +1,11 @@
 'use strict'
 
 /**
- * Content Classifier component for Antora
+ * Content Classifier component for Antora-pdf
  *
- * Organizes virtual files in the raw aggregate into a virtual content
- * catalog. This catalog can be used by other components in Antora to find
- * files by select properties, such as family, component, or version.
+ * First, this delegates to the normal Antora content-classifier.
+ * Then, this implementation examines the aggregate component descriptors for pdfFiles specification.
+ * If any are found, these files are made publishable and all other pages are made non-publishable.
  *
  * @namespace content-classifier
  */

@@ -18,7 +18,6 @@ function getOutline (doc, node, depth) {
   }
   const sections = doc('h1, h2, h3, h4, h5, h6', node)
   const sectionArray = toArray(sections)
-  // console.log('sectionArray', sectionArray)
 
   const pruned = sectionArray
     .map(section => doc(section))
@@ -26,14 +25,10 @@ function getOutline (doc, node, depth) {
   var index = 0
 
   function outlineLevel(level) {
-    // console.log('outlineLevel: ', level)
     const result = []
     while (index < pruned.length) {
-      // console.log(`index: ${index}, level: ${level}`)
       section = pruned[index]
-      // console.log('section', section.toString())
       if (section.is(`h${level}`)) {
-        // console.log('matched')
         index++
         if (level <= depth) {
           const id = section.attr('id') || ''
@@ -45,10 +40,8 @@ function getOutline (doc, node, depth) {
           })
         }
       } else if (section.is(`h${level - 1}`)) {
-        // console.log('returning')
         break
       } else {
-        // console.log('no match')
         index++
       }
     }

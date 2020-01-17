@@ -22,16 +22,6 @@ const faTipIcon = faLayer((push) => {
   push(faIcon(faLightbulb, { transform: { size: 10 }, classes: 'fa-inverse' }))
 })
 
-// const repeatTableHeadersContent = fs.readFileSync(`${__dirname}/repeating-table-headers.js`, 'utf8')
-// const pagedContent = fs.readFileSync(require.resolve('pagedjs/dist/paged.polyfill.js'), 'utf8')
-// const pagedRendering = fs.readFileSync(`${__dirname}/paged-rendering.js`, 'utf8')
-// const stylesDirectoryPath = ospath.resolve(`${__dirname}/../../css`)
-// const asciidoctorStyleContent = fs.readFileSync(`${stylesDirectoryPath}/asciidoctor.css`, 'utf8')
-// const documentStyleContent = fs.readFileSync(`${stylesDirectoryPath}/document.css`, 'utf8')
-// const titleDocumentStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/title-document-numbering.css`, 'utf8')
-// const titlePageStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/title-page-numbering.css`, 'utf8')
-// const bookStyleContent = fs.readFileSync(`${stylesDirectoryPath}/features/book.css`, 'utf8')
-
 const resolveStylesheet = (requirePath, cwd = process.cwd()) => {
   // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
   const paths = [cwd, ospath.dirname(__dirname)].map((start) => ospath.join(start, 'node_modules'))
@@ -124,44 +114,6 @@ ${faDom.css()}
   return ''
 }
 
-// <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css"/>
-const linkStylesheet = /(<link rel="stylesheet"[^>]*\/>)/g
-
-const syntaxHighlighterHead = (node, syntaxHighlighter, attrs) => {
-  let header = ''
-  if (syntaxHighlighter !== Opal.nil && syntaxHighlighter['$docinfo?']('head')) {
-    header = syntaxHighlighter.$docinfo('head', node, Opal.hash(attrs))
-  }
-  if (syntaxHighlighter !== Opal.nil && syntaxHighlighter['$docinfo?']('footer')) {
-    // reordering all link elements from footer to header, as pagedjs would otherwise render them too late in the process
-    const footer = syntaxHighlighter.$docinfo('footer', node, Opal.hash(attrs))
-    const matches = footer.match(linkStylesheet)
-    if (matches !== null) {
-      matches.forEach((element) => {
-        header = header + element
-      })
-    }
-  }
-  return header
-}
-
-const syntaxHighlighterFooter = (node, syntaxHighlighter, attrs) => {
-  let footer = ''
-  if (syntaxHighlighter !== Opal.nil && syntaxHighlighter['$docinfo?']('footer')) {
-    // skip all link elements in the footer as they are re-ordered to the header by syntaxHighlighterHead()
-    footer = syntaxHighlighter.$docinfo('footer', node, Opal.hash(attrs))
-    footer = footer.replace(linkStylesheet, '')
-  }
-  return footer
-}
-
-const assetUriScheme = (node) => {
-  let result = node.getAttribute('asset-uri-scheme', 'https')
-  if (result.trim() !== '') {
-    result = `${result}:`
-  }
-  return result
-}
 
 const isSvgIconEnabled = (node) => node.getDocument().isAttribute('icontype', 'svg') || node.getDocument().isAttribute('icons', 'font')
 
@@ -305,7 +257,7 @@ ${titleElement}${node.getContent()}
         return icon.html
       }
     } else {
-      return baseConverter.$convert_inline_image(baseConverter, node, transform, opts)
+      return baseConverter.$convert(baseConverter, node, transform, opts)
     }
   },
   colist: (node, transform, opts) => {
