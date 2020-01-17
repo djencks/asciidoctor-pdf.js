@@ -1,0 +1,32 @@
+{
+  "name": "@antora-pdf/pdf-content-classifier",
+  "version": "1.0.0-alpha.4",
+  "description": "A PDF converter for AsciiDoc based on Asciidoctor.js",
+  "engines": {
+    "node": ">=8.11.0"
+  },
+  "files": [
+    "lib/"
+  ],
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run test:smoke && npm run test:js",
+    "test:smoke": "./bin/asciidoctor-pdf --version",
+    "test:js": "mocha test/**_test.js",
+    "lint": "standard lib/**/**.js test/**/**.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mogztter/asciidoctor-pdf.js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mogztter/asciidoctor-pdf.js/issues"
+  },
+  "homepage": "https://github.com/Mogztter/asciidoctor-pdf.js#readme",
+  "dependencies": {
+    "@antora/content-classifier": "2.3.0-alpha.2"
+  }
+}

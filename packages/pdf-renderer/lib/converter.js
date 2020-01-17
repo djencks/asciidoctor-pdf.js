@@ -81,7 +81,12 @@ async function convert(file, browser) {
     pdfDoc = await addMetadata(pdfDoc, attributes)
     pdf = await pdfDoc.save()
     const pdfFile = {src: Object.assign({}, file.src)}    
-    pdfFile.src.basename = pdfFile.src.basename.slice(0, -4) + 'pdf'
+    const removeHidden = pdfFile.src.basename[0] == '_' ? 1 : 0
+    pdfFile.src.basename = pdfFile.src.basename.slice(removeHidden, -4) + 'pdf'
+    if (removeHidden) {
+      pdfFile.src.relative = pdfFile.src.relative.slice(1)
+      pdfFile.src.stem = pdfFile.src.stem.slice(1)
+    }
     pdfFile.src.mediaType = 'application/pdf'
     pdfFile.src.family = 'attachment'
     pdfFile.contents = Buffer.from(pdf)
