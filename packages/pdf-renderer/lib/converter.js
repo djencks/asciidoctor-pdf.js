@@ -11,6 +11,8 @@ async function convertToPdf (pages, catalogs) {
   try {
     result = await Promise.all(pages.map((file) => convert(file, browser)))
   } finally {
+    //If you comment out the next two lines, Antora will "keep running"
+    //and you can see the html version of pages by pointing to localhost:8081/...
     await browser.close()
     await server.close()
   }
