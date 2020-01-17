@@ -20,10 +20,10 @@ You need a local copy of Antora with several MRs applied.
 
 * link:https://gitlab.com/antora/antora/merge_requests/423[Upgrade to Asciidoctor.js 2.0.x]
 * link:https://gitlab.com/antora/antora/merge_requests/440[Allow a custom converter to replace/override the default HTML5 converter]
-* link:https://gitlab.com/antora/antora/merge_requests/439[Allow the pipeline to explicitly add extensions (and converters/templates) to the asciidoc config]
 * A fix for link:https://gitlab.com/antora/antora/issues/552[cli should allow specifying UI start_path as well as the UI bundle itself]
 
 The plausible way to get this is by cloning my link:https://gitlab.com/djencks/antora[Antora fork] and checking out the `issue-522-347-548-asciidoctor-2-delegating-converters-explicit-converters` branch.
+Note the name of this branch no longer reflects it's contents.
 
 Run yarn to set up the node_modules monorepo in antora.
 

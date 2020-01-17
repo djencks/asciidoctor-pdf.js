@@ -19,11 +19,16 @@ const bodyAttributesProcessor = require('./body-attributes-processor')
 
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)
-  const asciidocConfig = resolveAsciiDocConfig(playbook, [bodyAttributesProcessor], [pdfTemplate])
+  const asciidocConfig = resolveAsciiDocConfig(playbook)
   const [contentCatalog, uiCatalog] = await Promise.all([
     aggregateContent(playbook).then((contentAggregate) => classifyContent(playbook, contentAggregate, asciidocConfig)),
     loadUi(playbook),
   ])
+  if (!asciidocConfig.extensions) asciidocConfig.extensions = []
+  asciidocConfig.extensions.push(bodyAttributesProcessor)
+  if (!asciidocConfig.converters) asciidocConfig.converters = []
+  asciidocConfig.converters.push(pdfTemplate)
+
   const pages = convertDocuments(contentCatalog, asciidocConfig)
   const navigationCatalog = buildNavigation(contentCatalog, asciidocConfig)
   const composePage = createPageComposer(playbook, contentCatalog, uiCatalog, env)

@@ -1,4 +1,4 @@
-module.exports = function (registry) {
+module.exports.register = function (registry) {
   registry.treeProcessor(function () {
     var self = this
     self.process(function (doc) {
