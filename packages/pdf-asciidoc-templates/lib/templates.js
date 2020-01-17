@@ -163,15 +163,6 @@ const assetUriScheme = (node) => {
   return result
 }
 
-const langAttr = (node) => {
-  const attrNolang = node.getAttribute('nolang')
-  if (attrNolang === '') {
-    return ''
-  }
-  const attrLang = node.getAttribute('lang', 'en')
-  return ` lang="${attrLang}"`
-}
-
 const isSvgIconEnabled = (node) => node.getDocument().isAttribute('icontype', 'svg') || node.getDocument().isAttribute('icons', 'font')
 
 const titlePage = (node) => {
@@ -218,21 +209,6 @@ ${baseConverter.$convert_outline(node)}
 module.exports = (baseConverter, {file, contentCatalog, config}) => {
   return {
     embedded: (node, transform, opts) => {
-      const bodyAttrs = node.getId() ? [`id="${node.getId()}"`] : []
-      let classes
-      if (node.hasSections() && node.isAttribute('toc-class') && node.isAttribute('toc') && node.isAttribute('toc-placement', 'auto')) {
-        classes = [node.getDoctype(), node.getAttribute('toc-class'), `toc-${node.getAttribute('toc-position', 'header')}`]
-      } else {
-        classes = [node.getDoctype()]
-      }
-      if (node.hasRole()) {
-        classes.push(node.getRole())
-      }
-      bodyAttrs.push(`class="${classes.join(' ')}"`)
-      if (node.hasAttribute('max-width')) {
-        bodyAttrs.push(`style="max-width: ${node.getAttribute('max-width')};"`)
-      }
-      node.setAttribute('page-pagedjs-body-attrs', bodyAttrs.join(' '))
       return `${titlePage(node)}
 ${outline(baseConverter, node, transform, opts)}
 ${tocHeader(baseConverter, node, transform, opts)}
