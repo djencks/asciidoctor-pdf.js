@@ -95,6 +95,16 @@ By commenting out a couple lines in converter.js you can see the same thing Chro
 
 == Next steps
 
-?
+? tests??
 
 It's presumably possible to automatically convert nav.adoc files to "`including files`", but I'd like to see some real world experience with manual conversions before trying to implement this.
+
+== Paged media/PDF configuration
+
+To a large extent how this works is still a mystery to me...
+
+An overview of how the paged media spec sets things up is here: link:https://www.pagedmedia.org/paged-js/[].
+
+For Antora-pdf that is done in the UI bundle, in the `pdf/css/document.css` and `pdf/css/title-document-numbering.css` files.
+
+Asciidoctor-pdf.js has some additional files for other circumstances, that I have not understood or integrated.
