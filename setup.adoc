@@ -21,6 +21,7 @@ You need a local copy of Antora with several MRs applied.
 * link:https://gitlab.com/antora/antora/merge_requests/423[Upgrade to Asciidoctor.js 2.0.x]
 * link:https://gitlab.com/antora/antora/merge_requests/440[Allow a custom converter to replace/override the default HTML5 converter]
 * link:https://gitlab.com/antora/antora/merge_requests/439[Allow the pipeline to explicitly add extensions (and converters/templates) to the asciidoc config]
+* A fix for link:https://gitlab.com/antora/antora/issues/552[cli should allow specifying UI start_path as well as the UI bundle itself]
 
 The plausible way to get this is by cloning my link:https://gitlab.com/djencks/antora[Antora fork] and checking out the `issue-522-347-548-asciidoctor-2-delegating-converters-explicit-converters` branch.
 
@@ -43,16 +44,16 @@ Whenever you run `yarn` here, you'll need to run `yarn` in antora!
 `yarn` here follows the symlink and installs the released version of antora into antora's node_modules.
 Better, move `node_modules/@antora` out of the way before running yarn, and back afterwards.
 
-== set up a way to run your local copy of antora
+== Set up a way to run your local copy of antora
 
 in e.g. `~/.profile`, `export ANTORA_DEV=~/projects/antora/antora/node_modules/.bin/antora`
 
 == UI
 
 Get the `pdf-with-hbs` `antora-ui-default` branch from link:https://gitlab.com/djencks/antora-ui-default[my fork] and build it.
-You'll need the path to it for your playbook.
+You'll need the path to it for your playbook or command line.
 
-== Set up your playbook
+== (Optional) Set up your playbook if you want a simpler command line
 
 ----
 ui:
@@ -64,14 +65,28 @@ ui:
 
 == Running
 
-A typical command line in this directory:
+A typical command line in this directory, specifying both UI bundle and start_path:
 ----
- $ANTORA_DEV ../../antora/simple-examples/multiple-components/xrefs/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator
+ $ANTORA_DEV ../../antora/simple-examples/multiple-components/xrefs/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator  --ui-bundle-url ../../antora/antora-ui-default/build/ui-pdf-bundle.zip --ui-start-path pdf
 ----
-
-== Summary comment
 
 The pipeline module must be referred to with a local file path.
+
+== Configuration
+
+By default, all published pages are converted to pdf and put in each components `_attachments` directory.
+
+Alternatively, you can list the files to convert in each component descriptor under the pdfFiles key, in the form `<module>:<relative>`.
+
+----
+pdfFiles:
+- ROOT:_sitepdf.adoc
+----
+
+If this file is hidden (by the initial `\_`) it will be published anyway, with the initial `_` removed from the pdf name.
+
+For instance, you can take a nav.adoc file and convert the `* \xref::` to `include::`.
+Be sure to include e.g. `[lineoffset=1]`, where the lineoffset is most likely the number of `*` at the beginning of the line.
 
 == Html "Preview"
 
@@ -80,6 +95,6 @@ By commenting out a couple lines in converter.js you can see the same thing Chro
 
 == Next steps
 
-* I believe single-adoc pdf generation is adequate at this point.
-Tell me if I'm wrong!
-* Find some way to produce artificial larger pages combining a whole component, or perhaps a nav file, or some other scheme.
+?
+
+It's presumably possible to automatically convert nav.adoc files to "`including files`", but I'd like to see some real world experience with manual conversions before trying to implement this.
