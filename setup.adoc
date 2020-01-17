@@ -73,6 +73,11 @@ A typical command line in this directory:
 
 The pipeline module must be referred to with a local file path.
 
+== Html "Preview"
+
+The html that gets printed is written out in the normal spots in the site.
+By commenting out a couple lines in converter.js you can see the same thing Chromium does at `http://localhost:8081`
+
 == Next steps
 
 * I believe single-adoc pdf generation is adequate at this point.
