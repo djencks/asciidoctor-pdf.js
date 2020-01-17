@@ -1,20 +1,47 @@
-= How to set this up
+= Pdfs from Antora using pagedjs
 
-== setting up this project
+This project adapts the principles behind asciidoctor-pdf.js to work in Antora.
 
-lerna bootstrap
+* Slight tweaks to html generation.
+* UI project adapted to pdf output based on pagedjs.
+* pdf rendering through headless Chromium controlled through Puppeteer.
+* content supplied to Chromium by running a local server.
 
-Antora must have issue-347-custom-converters applied
+Current output:
 
-Find your antora checkout, say `/Users/david/projects/antora/antora/node_modules/@antora`
+* One pdf per output html page.
+* pdfs are added to the `_attachments` directory in the component, in the same directory structure as the pages.
 
-Remove or move your node_modules/@antora.
+== How to set this up
+
+=== Antora
+
+You need a local copy of Antora with several MRs applied.
+
+* link:https://gitlab.com/antora/antora/merge_requests/423[Upgrade to Asciidoctor.js 2.0.x]
+* link:https://gitlab.com/antora/antora/merge_requests/440[Allow a custom converter to replace/override the default HTML5 converter]
+* link:https://gitlab.com/antora/antora/merge_requests/439[Allow the pipeline to explicitly add extensions (and converters/templates) to the asciidoc config]
+
+The plausible way to get this is by cloning my link:https://gitlab.com/djencks/antora[Antora fork] and checking out the `issue-522-347-548-asciidoctor-2-delegating-converters-explicit-converters` branch.
+
+Run yarn to set up the node_modules monorepo in antora.
+
+=== This project, asciidoctor-pdf.js, antora branch
+
+After you've cloned (from my fork) and switched to this branch, run yarn to set up the monorepo here.
+
+Now you have to link the local patched Antora into this project.
+
+Find your @antora in the antora monorepo, say `/Users/david/projects/antora/antora/node_modules/@antora`
+
+Remove or move your `node_modules/@antora` in this project.
 
 Symlink to the local antora: `ln -s /Users/david/projects/antora/antora/node_modules/@antora node_modules/\@antora`
 
 BEWARE! 
-Whenever you run `lerna bootstrap` here, you'll need to run `lerna clean` and `yarn` in antora!
-`lerna bootstrap` follows the symlink and installs the released version of antora into antora's node_modules.
+Whenever you run `yarn` here, you'll need to run `yarn` in antora!
+`yarn` here follows the symlink and installs the released version of antora into antora's node_modules.
+Better, move `node_modules/@antora` out of the way before running yarn, and back afterwards.
 
 == set up a way to run your local copy of antora
 
@@ -22,15 +49,12 @@ in e.g. `~/.profile`, `export ANTORA_DEV=~/projects/antora/antora/node_modules/.
 
 == UI
 
-Get the pdf antora-ui-default branch and build it.
+Get the `pdf-with-hbs` `antora-ui-default` branch from link:https://gitlab.com/djencks/antora-ui-default[my fork] and build it.
 You'll need the path to it for your playbook.
 
 == Set up your playbook
 
 ----
-asciidoc:
-  converters:
-  - './../../../../asciidoctor/asciidoctor-pdf.js/node_modules/@antora-pdf/pdf-asciidoc-templates'
 ui:
   bundle:
     url: ./../../../antora-ui-default/build/ui-pdf-bundle.zip
@@ -41,10 +65,16 @@ ui:
 == Running
 
 A typical command line in this directory:
- ----
+----
  $ANTORA_DEV ../../antora/simple-examples/multiple-components/xrefs/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator
 ----
 
 == Summary comment
 
-Both the custom elements, the pipeline module and the converter/template module, must be referred to with local file paths.
+The pipeline module must be referred to with a local file path.
+
+== Next steps
+
+* I believe single-adoc pdf generation is adequate at this point.
+Tell me if I'm wrong!
+* Find some way to produce artificial larger pages combining a whole component, or perhaps a nav file, or some other scheme.
