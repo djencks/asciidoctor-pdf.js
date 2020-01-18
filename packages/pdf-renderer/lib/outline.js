@@ -25,7 +25,7 @@ function getOutline (doc, node, depth) {
   function outlineLevel (level) {
     const result = []
     while (index < pruned.length) {
-      section = pruned[index]
+      const section = pruned[index]
       if (section.is(`h${level}`)) {
         index++
         if (level <= depth) {

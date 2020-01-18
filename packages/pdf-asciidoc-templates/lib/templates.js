@@ -1,100 +1,102 @@
-/* global Opal */
-const fs = require('fs')
-const ospath = require('path')
+'use strict'
+
+// const fs = require('fs')
+// const ospath = require('path')
 const stemContent = require('./stem')
 
-const { layer: faLayer, icon: faIcon, dom: faDom, library: faLibrary } = require('@fortawesome/fontawesome-svg-core')
-const {
-  faCircle,
-  faInfoCircle,
-  faExclamationCircle,
-  faQuestionCircle,
-  faExclamationTriangle,
-  faHandPaper,
-  fas,
-} = require('@fortawesome/free-solid-svg-icons')
-const { faLightbulb, far } = require('@fortawesome/free-regular-svg-icons')
-const { fab } = require('@fortawesome/free-brands-svg-icons')
-faLibrary.add(fas, far, fab)
+// const { layer: faLayer, icon: faIcon, dom: faDom, library: faLibrary } = require('@fortawesome/fontawesome-svg-core')
+const { icon: faIcon } = require('@fortawesome/fontawesome-svg-core')
+// const {
+//   faCircle,
+//   faInfoCircle,
+//   faExclamationCircle,
+//   faQuestionCircle,
+//   faExclamationTriangle,
+//   faHandPaper,
+//   fas,
+// } = require('@fortawesome/free-solid-svg-icons')
+// const { faLightbulb, far } = require('@fortawesome/free-regular-svg-icons')
+// const { fab } = require('@fortawesome/free-brands-svg-icons')
+// faLibrary.add(fas, far, fab)
 
-const faDefaultIcon = faIcon(faQuestionCircle)
-const faImportantIcon = faIcon(faExclamationCircle)
-const faNoteIcon = faIcon(faInfoCircle)
-const faWarningIcon = faIcon(faExclamationTriangle)
-const faCautionIcon = faLayer((push) => {
-  push(faIcon(faCircle))
-  push(faIcon(faHandPaper, { transform: { size: 10, x: -0.5 }, classes: 'fa-inverse' }))
-})
-const faTipIcon = faLayer((push) => {
-  push(faIcon(faCircle))
-  push(faIcon(faLightbulb, { transform: { size: 10 }, classes: 'fa-inverse' }))
-})
+// const faDefaultIcon = faIcon(faQuestionCircle)
+// const faImportantIcon = faIcon(faExclamationCircle)
+// const faNoteIcon = faIcon(faInfoCircle)
+// const faWarningIcon = faIcon(faExclamationTriangle)
+// const faCautionIcon = faLayer((push) => {
+//   push(faIcon(faCircle))
+//   push(faIcon(faHandPaper, { transform: { size: 10, x: -0.5 }, classes: 'fa-inverse' }))
+// })
+// const faTipIcon = faLayer((push) => {
+//   push(faIcon(faCircle))
+//   push(faIcon(faLightbulb, { transform: { size: 10 }, classes: 'fa-inverse' }))
+// })
 
-const resolveStylesheet = (requirePath, cwd = process.cwd()) => {
-  // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
-  const paths = [cwd, ospath.dirname(__dirname)].map((start) => ospath.join(start, 'node_modules'))
-  return require.resolve(requirePath, { paths })
-}
+// const resolveStylesheet = (requirePath, cwd = process.cwd()) => {
+//   // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
+//   const paths = [cwd, ospath.dirname(__dirname)].map((start) => ospath.join(start, 'node_modules'))
+//   return require.resolve(requirePath, { paths })
+// }
 
-const styles = (node) => {
-  const stylesheetAttribute = node.getAttribute('stylesheet')
-  if (stylesheetAttribute && stylesheetAttribute.trim() !== '') {
-    return stylesheetAttribute
-      .split(';')
-      .map((value) => value.trim())
-      .filter((value) => value !== '')
-      .map((stylesheet) => {
-        let href
-        if (ospath.isAbsolute(stylesheet)) {
-          href = stylesheet
-        } else {
-          const stylesDirectory = node.getAttribute('stylesdir')
-          let start
-          if (stylesDirectory) {
-            if (ospath.isAbsolute(stylesDirectory)) {
-              start = stylesDirectory
-            } else {
-              start = ospath.join(node.getDocument().getBaseDir(), stylesDirectory)
-            }
-          } else {
-            start = node.getDocument().getBaseDir()
-          }
-          href = ospath.join(start, stylesheet)
-          if (!fs.existsSync(href)) {
-            try {
-              href = resolveStylesheet(stylesheet)
-            } catch (_) {
-              console.warn(`Unable to resolve the stylesheet: ${stylesheet}`)
-            }
-          }
-        }
-        return `<link href="${href}" rel="stylesheet">`
-      })
-      .join('\n')
-  }
-  return `<style>
-${asciidoctorStyleContent}
-${documentStyleContent}
-${titlePageStyle(node)}
-${documentTypeStyle(node)}
-</style>`
-}
+// const styles = (node) => {
+//   const stylesheetAttribute = node.getAttribute('stylesheet')
+//   if (stylesheetAttribute && stylesheetAttribute.trim() !== '') {
+//     return stylesheetAttribute
+//       .split(';')
+//       .map((value) => value.trim())
+//       .filter((value) => value !== '')
+//       .map((stylesheet) => {
+//         let href
+//         if (ospath.isAbsolute(stylesheet)) {
+//           href = stylesheet
+//         } else {
+//           const stylesDirectory = node.getAttribute('stylesdir')
+//           let start
+//           if (stylesDirectory) {
+//             if (ospath.isAbsolute(stylesDirectory)) {
+//               start = stylesDirectory
+//             } else {
+//               start = ospath.join(node.getDocument().getBaseDir(), stylesDirectory)
+//             }
+//           } else {
+//             start = node.getDocument().getBaseDir()
+//           }
+//           href = ospath.join(start, stylesheet)
+//           if (!fs.existsSync(href)) {
+//             try {
+//               href = resolveStylesheet(stylesheet)
+//             } catch (_) {
+//               console.warn(`Unable to resolve the stylesheet: ${stylesheet}`)
+//             }
+//           }
+//         }
+//         return `<link href="${href}" rel="stylesheet">`
+//       })
+//       .join('\n')
+//   }
+//   return `<style>
+// ${asciidoctorStyleContent}
+// ${documentStyleContent}
+// ${titlePageStyle(node)}
+// ${documentTypeStyle(node)}
+// </style>`
+// }
 
-const titlePageStyle = (node) => {
-  if (hasTitlePage(node)) {
-    // The page number start after the first page (ie. the title page)
-    return titlePageStyleContent
-  }
-  return titleDocumentStyleContent
-}
+// const titlePageStyle = (node) => {
+//   if (hasTitlePage(node)) {
+//     // The page number start after the first page (ie. the title page)
+//     return titlePageStyleContent
+//   }
+//   return titleDocumentStyleContent
+// }
 
-const documentTypeStyle = (node) => {
-  const doc = node.getDocument()
-  if (doc.getDoctype() === 'book') {
-    return bookStyleContent
-  }
-  return ''
-}
+// const documentTypeStyle = (node) => {
+//   const doc = node.getDocument()
+//   if (doc.getDoctype() === 'book') {
+//     return bookStyleContent
+//   }
+//   return ''
+// }
 
 const hasTitlePage = (node) => {
   const doc = node.getDocument()
@@ -118,14 +120,14 @@ const footnotes = (node) => {
   return ''
 }
 
-const fontAwesomeStyle = (node) => {
-  if (isSvgIconEnabled(node)) {
-    return `<style>
-${faDom.css()}
-</style>`
-  }
-  return ''
-}
+// const fontAwesomeStyle = (node) => {
+//   if (isSvgIconEnabled(node)) {
+//     return `<style>
+// ${faDom.css()}
+// </style>`
+//   }
+//   return ''
+// }
 
 const isSvgIconEnabled = (node) =>
   node.getDocument().isAttribute('icontype', 'svg') || node.getDocument().isAttribute('icons', 'font')
@@ -147,7 +149,8 @@ const titlePage = (node) => {
 }
 
 /**
- * Generate an (hidden) outline otherwise Chrome won't generate "Dests" fields and we won't be able to generate a PDF outline.
+ * Generate an (hidden) outline otherwise Chrome won't generate "Dests" fields
+ * and we won't be able to generate a PDF outline.
  */
 const outline = (baseConverter, node, transform, opts) => {
   if (baseConverter) {
@@ -187,7 +190,7 @@ ${stemContent.content(node)}`
       const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
       const name = node.getAttribute('name')
       const titleElement = node.getTitle() ? `<div class="title">${node.getTitle()}</div>\n` : ''
-      let label
+      // let label
       //TODO figure out what to do: force text admonition labels for now
       // if (node.getDocument().hasAttribute('icons')) {
       //   if (node.getDocument().isAttribute('icons', 'font') && !node.hasAttribute('icon')) {
@@ -210,7 +213,7 @@ ${stemContent.content(node)}`
       //     label = `<img src="${node.getIconUri(name)}" alt="${node.getAttribute('textlabel')}"/>`
       //   }
       // } else {
-      label = `<div class="title">${node.getAttribute('textlabel')}</div>`
+      const label = `<div class="title">${node.getAttribute('textlabel')}</div>`
       // }
       return `<div${idAttribute} class="admonitionblock ${name}${node.getRole() ? node.getRole() : ''}">
 <table>

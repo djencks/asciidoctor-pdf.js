@@ -75,6 +75,8 @@ function computeOut (src, family, htmlUrlExtensionStyle) {
   }
 }
 
+const SPACE_RX = / /g
+
 function computePub (src, out, family, htmlUrlExtensionStyle) {
   const pub = {}
   let url

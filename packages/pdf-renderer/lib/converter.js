@@ -1,4 +1,5 @@
-/* global Opal */
+'use strict'
+
 const { PDFDocument } = require('pdf-lib')
 const puppeteer = require('puppeteer')
 const { addOutline } = require('./outline.js')
@@ -30,12 +31,7 @@ async function setup (catalogs) {
     Object.assign(puppeteerConfig, { defaultViewport: null })
   }
   const browser = await puppeteer.launch(puppeteerConfig)
-  try {
-    return { browser, server: s }
-  } catch (Error) {
-    //TODO something
-    throw Error
-  }
+  return { browser, server: s }
 }
 
 async function convert (file, browser) {
@@ -69,8 +65,8 @@ async function convert (file, browser) {
       pdfOptions.height = pdfHeight
     }
     const format = attributes['pdf-format']
-    if (format) {
-      pdfOptions.format = format // Paper format. If set, takes priority over width or height options. Defaults to 'Letter'.
+    if (format) { // Paper format. If set, takes priority over width or height options. Defaults to 'Letter'.
+      pdfOptions.format = format
     }
 
     let pdf = await page.pdf(pdfOptions)
@@ -82,7 +78,7 @@ async function convert (file, browser) {
     pdfDoc = await addMetadata(pdfDoc, attributes)
     pdf = await pdfDoc.save()
     const pdfFile = { src: Object.assign({}, file.src) }
-    const removeHidden = pdfFile.src.basename[0] == '_' ? 1 : 0
+    const removeHidden = pdfFile.src.basename[0] === '_' ? 1 : 0
     pdfFile.src.basename = pdfFile.src.basename.slice(removeHidden, -4) + 'pdf'
     if (removeHidden) {
       pdfFile.src.relative = pdfFile.src.relative.slice(1)
