@@ -7,7 +7,7 @@ const ospath = require('path')
 const expect = chai.expect
 const dirtyChai = require('dirty-chai')
 chai.use(dirtyChai)
-require('./helper.js')(chai)
+require('./helper.js/index.js')(chai)
 
 const asciidoctor = require('@asciidoctor/core')()
 const converter = require('../lib/converter.js')
