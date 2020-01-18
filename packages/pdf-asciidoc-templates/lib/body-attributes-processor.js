@@ -33,6 +33,16 @@ module.exports.register = function (registry) {
       }
       doc.setAttribute('page-pagedjs-lang-attr', langAttr())
 
+      if (doc.getDoctype() === 'book' || doc.hasAttribute('title-page')) {
+        doc.setAttribute('page-pagedjs-title-page', '')
+      }
+      if (doc.getDoctype() === 'book') {
+        doc.setAttribute('page-pagedjs-book', '')
+      }
+      if (doc.isAttribute('icontype', 'svg') || doc.isAttribute('icons', 'font')) {
+        doc.setAttribute('page-pagedjs-svg-icons', '')
+      }
+
       return doc
     })
   })

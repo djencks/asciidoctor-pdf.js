@@ -5,32 +5,33 @@
 const stemContent = require('./stem')
 
 // const { layer: faLayer, icon: faIcon, dom: faDom, library: faLibrary } = require('@fortawesome/fontawesome-svg-core')
-const { icon: faIcon } = require('@fortawesome/fontawesome-svg-core')
-// const {
-//   faCircle,
-//   faInfoCircle,
-//   faExclamationCircle,
-//   faQuestionCircle,
-//   faExclamationTriangle,
-//   faHandPaper,
-//   fas,
-// } = require('@fortawesome/free-solid-svg-icons')
-// const { faLightbulb, far } = require('@fortawesome/free-regular-svg-icons')
-// const { fab } = require('@fortawesome/free-brands-svg-icons')
-// faLibrary.add(fas, far, fab)
+const { layer: faLayer, icon: faIcon, library: faLibrary } = require('@fortawesome/fontawesome-svg-core')
+// const { icon: faIcon } = require('@fortawesome/fontawesome-svg-core')
+const {
+  faCircle,
+  faInfoCircle,
+  faExclamationCircle,
+  faQuestionCircle,
+  faExclamationTriangle,
+  faHandPaper,
+  fas,
+} = require('@fortawesome/free-solid-svg-icons')
+const { faLightbulb, far } = require('@fortawesome/free-regular-svg-icons')
+const { fab } = require('@fortawesome/free-brands-svg-icons')
+faLibrary.add(fas, far, fab)
 
-// const faDefaultIcon = faIcon(faQuestionCircle)
-// const faImportantIcon = faIcon(faExclamationCircle)
-// const faNoteIcon = faIcon(faInfoCircle)
-// const faWarningIcon = faIcon(faExclamationTriangle)
-// const faCautionIcon = faLayer((push) => {
-//   push(faIcon(faCircle))
-//   push(faIcon(faHandPaper, { transform: { size: 10, x: -0.5 }, classes: 'fa-inverse' }))
-// })
-// const faTipIcon = faLayer((push) => {
-//   push(faIcon(faCircle))
-//   push(faIcon(faLightbulb, { transform: { size: 10 }, classes: 'fa-inverse' }))
-// })
+const faDefaultIcon = faIcon(faQuestionCircle)
+const faImportantIcon = faIcon(faExclamationCircle)
+const faNoteIcon = faIcon(faInfoCircle)
+const faWarningIcon = faIcon(faExclamationTriangle)
+const faCautionIcon = faLayer((push) => {
+  push(faIcon(faCircle))
+  push(faIcon(faHandPaper, { transform: { size: 10, x: -0.5 }, classes: 'fa-inverse' }))
+})
+const faTipIcon = faLayer((push) => {
+  push(faIcon(faCircle))
+  push(faIcon(faLightbulb, { transform: { size: 10 }, classes: 'fa-inverse' }))
+})
 
 // const resolveStylesheet = (requirePath, cwd = process.cwd()) => {
 //   // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
@@ -134,8 +135,7 @@ const isSvgIconEnabled = (node) =>
 
 const titlePage = (node) => {
   if (node.getDocumentTitle()) {
-    const doc = node.getDocument()
-    if (hasTitlePage(doc)) {
+    if (hasTitlePage(node)) {
       return `<div id="cover" class="title-page">
   <h1>${node.getDocumentTitle()}</h1>
   <h2>${node.getDocument().getAuthor()}</h2>
@@ -181,7 +181,7 @@ module.exports = (baseConverter, { file, contentCatalog, config }) => {
 ${outline(baseConverter, node, transform, opts)}
 ${tocHeader(baseConverter, node, transform, opts)}
 <div id="content" class="content">
-  ${baseConverter.$convert(node, transform, opts)}
+  ${node.getContent()}
 </div>
 ${footnotes(node)}
 ${stemContent.content(node)}`
@@ -190,31 +190,31 @@ ${stemContent.content(node)}`
       const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
       const name = node.getAttribute('name')
       const titleElement = node.getTitle() ? `<div class="title">${node.getTitle()}</div>\n` : ''
-      // let label
+      let label
       //TODO figure out what to do: force text admonition labels for now
-      // if (node.getDocument().hasAttribute('icons')) {
-      //   if (node.getDocument().isAttribute('icons', 'font') && !node.hasAttribute('icon')) {
-      //     let icon
-      //     if (name === 'note') {
-      //       icon = faNoteIcon
-      //     } else if (name === 'important') {
-      //       icon = faImportantIcon
-      //     } else if (name === 'caution') {
-      //       icon = faCautionIcon
-      //     } else if (name === 'tip') {
-      //       icon = faTipIcon
-      //     } else if (name === 'warning') {
-      //       icon = faWarningIcon
-      //     } else {
-      //       icon = faDefaultIcon
-      //     }
-      //     label = icon.html
-      //   } else {
-      //     label = `<img src="${node.getIconUri(name)}" alt="${node.getAttribute('textlabel')}"/>`
-      //   }
-      // } else {
-      const label = `<div class="title">${node.getAttribute('textlabel')}</div>`
-      // }
+      if (node.getDocument().hasAttribute('icons')) {
+        if (node.getDocument().isAttribute('icons', 'font') && !node.hasAttribute('icon')) {
+          let icon
+          if (name === 'note') {
+            icon = faNoteIcon
+          } else if (name === 'important') {
+            icon = faImportantIcon
+          } else if (name === 'caution') {
+            icon = faCautionIcon
+          } else if (name === 'tip') {
+            icon = faTipIcon
+          } else if (name === 'warning') {
+            icon = faWarningIcon
+          } else {
+            icon = faDefaultIcon
+          }
+          label = icon.html
+        } else {
+          label = `<img src="${node.getIconUri(name)}" alt="${node.getAttribute('textlabel')}"/>`
+        }
+      } else {
+        label = `<div class="title">${node.getAttribute('textlabel')}</div>`
+      }
       return `<div${idAttribute} class="admonitionblock ${name}${node.getRole() ? node.getRole() : ''}">
 <table>
 <tr>
