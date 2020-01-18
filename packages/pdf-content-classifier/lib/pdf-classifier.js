@@ -9,7 +9,13 @@ function classifyContent (playbook, aggregate, siteAsciiDocConfig = undefined) {
     const { name, version, pdfFiles = [] } = descriptor
     pdfFiles.forEach((pdfFileName) => {
       const pdfFileNameBits = pdfFileName.split(':')
-      const pdfFile = contentCatalog.getById({component: name, version, module: pdfFileNameBits[0] || 'ROOT', family: 'page', relative: pdfFileNameBits[1]})
+      const pdfFile = contentCatalog.getById({
+        component: name,
+        version,
+        module: pdfFileNameBits[0] || 'ROOT',
+        family: 'page',
+        relative: pdfFileNameBits[1],
+      })
       if (pdfFile) {
         pages.push(pdfFile)
       } else {
@@ -20,7 +26,9 @@ function classifyContent (playbook, aggregate, siteAsciiDocConfig = undefined) {
   }, [])
   if (pdfPages.length) {
     console.log('printing only configured pdf pages')
-    contentCatalog.getPages().forEach((page) => {delete page.out})
+    contentCatalog.getPages().forEach((page) => {
+      delete page.out
+    })
     pdfPages.forEach((page) => {
       page.out = computeOut(page.src, 'page', contentCatalog.htmlUrlExtensionStyle)
       page.pub = computePub(page.src, page.out, 'page', contentCatalog.htmlUrlExtensionStyle)
@@ -102,6 +110,5 @@ function computePub (src, out, family, htmlUrlExtensionStyle) {
 
   return pub
 }
-
 
 module.exports = classifyContent

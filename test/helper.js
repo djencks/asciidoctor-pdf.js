@@ -47,9 +47,9 @@ function toVisuallyMatch (referenceFilename, actualPath) {
 
   const currentFilenameRegexp = new RegExp(`${actualBasename}-(?:actual|reference)-([0-9]+).png`)
   const files = fs.readdirSync(imagesOutputDir)
-  const indexes = new Set(files
-    .filter((name) => name.match(currentFilenameRegexp))
-    .map((name) => name.match(currentFilenameRegexp)[1]))
+  const indexes = new Set(
+    files.filter((name) => name.match(currentFilenameRegexp)).map((name) => name.match(currentFilenameRegexp)[1])
+  )
   for (const idx of indexes) {
     const referencePageFilename = `${outputBasename}-reference-${idx}.png`
     const referencePageExists = fs.existsSync(referencePageFilename)
@@ -84,11 +84,11 @@ module.exports = (chai) => {
     _chai.Assertion.addMethod('visuallyIdentical', function (reference) {
       const obj = this._obj
       this.assert(
-        toVisuallyMatch(reference, obj) === true
-        , 'expected #{obj} to be visually identical to #{reference}'
-        , 'expected #{obj} to not be visually identical to #{reference}'
-        , reference
-        , obj
+        toVisuallyMatch(reference, obj) === true,
+        'expected #{obj} to be visually identical to #{reference}',
+        'expected #{obj} to not be visually identical to #{reference}',
+        reference,
+        obj
       )
     })
   })

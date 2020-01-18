@@ -26,7 +26,7 @@ describe('PDF converter', function () {
 
   after(function () {
     // clean the output directory if there's no failed tests (and if the DEBUG environment variable is absent).
-    const failedTests = this.test.parent.tests.filter(t => t.state === 'failed')
+    const failedTests = this.test.parent.tests.filter((t) => t.state === 'failed')
     if (failedTests.length === 0 && typeof process.env.DEBUG === 'undefined') {
       const outputDir = ospath.join(__dirname, 'output')
       rimraf.sync(outputDir)
@@ -67,19 +67,29 @@ describe('PDF converter', function () {
 
   it('should not encode HTML entity in the PDF outline', async () => {
     const options = { attributes: { toc: 'macro' } }
-    const pdfDoc = await convert(`${__dirname}/fixtures/sections.adoc`, `${__dirname}/output/sections-toc-absent.pdf`, options)
+    const pdfDoc = await convert(
+      `${__dirname}/fixtures/sections.adoc`,
+      `${__dirname}/output/sections-toc-absent.pdf`,
+      options
+    )
     const refs = getOutlineRefs(pdfDoc)
     expect(refs.length).to.equal(9)
     expect(refs[2].get(PDFName.of('Dest')).encodedName).to.equal('/_section_2_black_white')
     expect(decodePDFHexStringValue(refs[2].get(PDFName.of('Title')).value)).to.equal('Section 2: Black & White')
     expect(refs[5].get(PDFName.of('Dest')).encodedName).to.equal('/_section_3_typographic_quotes')
     expect(decodePDFHexStringValue(refs[5].get(PDFName.of('Title')).value)).to.equal('Section 3: “Typographic quotes”')
-    expect(decodePDFHexStringValue(refs[7].get(PDFName.of('Title')).value)).to.equal('Section 4: Asterisk hex * and decimal *')
+    expect(decodePDFHexStringValue(refs[7].get(PDFName.of('Title')).value)).to.equal(
+      'Section 4: Asterisk hex * and decimal *'
+    )
   })
 
   it('should generate a PDF outline even if the TOC is absent from the output', async () => {
     const options = { attributes: { toc: 'macro' } }
-    const pdfDoc = await convert(`${__dirname}/fixtures/sections.adoc`, `${__dirname}/output/sections-toc-absent.pdf`, options)
+    const pdfDoc = await convert(
+      `${__dirname}/fixtures/sections.adoc`,
+      `${__dirname}/output/sections-toc-absent.pdf`,
+      options
+    )
     const refs = getOutlineRefs(pdfDoc)
     expect(refs.length).to.equal(9)
     expect(refs[0].get(PDFName.of('Dest')).encodedName).to.equal('/_section_1')
@@ -94,7 +104,11 @@ describe('PDF converter', function () {
 
   it('should honor toclevels 1 when generating a PDF outline', async () => {
     const options = { attributes: { toclevels: 1 } }
-    const pdfDoc = await convert(`${__dirname}/fixtures/sections.adoc`, `${__dirname}/output/sections-toclevels-1.pdf`, options)
+    const pdfDoc = await convert(
+      `${__dirname}/fixtures/sections.adoc`,
+      `${__dirname}/output/sections-toclevels-1.pdf`,
+      options
+    )
     const refs = getOutlineRefs(pdfDoc)
     expect(refs.length).to.equal(4)
     expect(refs[0].get(PDFName.of('Dest')).encodedName).to.equal('/_section_1')
@@ -102,7 +116,11 @@ describe('PDF converter', function () {
 
   it('should honor toclevels 3 when generating a PDF outline', async () => {
     const options = { attributes: { toclevels: 3 } }
-    const pdfDoc = await convert(`${__dirname}/fixtures/sections.adoc`, `${__dirname}/output/sections-toclevels-1.pdf`, options)
+    const pdfDoc = await convert(
+      `${__dirname}/fixtures/sections.adoc`,
+      `${__dirname}/output/sections-toclevels-1.pdf`,
+      options
+    )
     const refs = getOutlineRefs(pdfDoc)
     expect(refs.length).to.equal(11)
     expect(refs[0].get(PDFName.of('Dest')).encodedName).to.equal('/_section_1')
@@ -112,7 +130,9 @@ describe('PDF converter', function () {
     const opts = {}
     const outputFile = `${__dirname}/output/title-page-background-color.pdf`
     opts.to_file = outputFile
-    opts.attributes = { stylesheet: `${__dirname}/../css/asciidoctor.css;${__dirname}/../css/document.css;${__dirname}/../css/features/book.css;${__dirname}/fixtures/black-title-page.css` }
+    opts.attributes = {
+      stylesheet: `${__dirname}/../css/asciidoctor.css;${__dirname}/../css/document.css;${__dirname}/../css/features/book.css;${__dirname}/fixtures/black-title-page.css`,
+    }
     await converter.convert(asciidoctor, `${__dirname}/fixtures/title-page.adoc`, opts, false)
     expect(outputFile).to.be.visuallyIdentical('title-page-background-color.pdf')
   })

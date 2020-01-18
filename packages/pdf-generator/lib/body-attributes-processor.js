@@ -4,7 +4,12 @@ module.exports.register = function (registry) {
     self.process(function (doc) {
       const bodyAttrs = doc.getId() ? [`id="${doc.getId()}"`] : []
       let classes
-      if (doc.hasSections() && doc.isAttribute('toc-class') && doc.isAttribute('toc') && doc.isAttribute('toc-placement', 'auto')) {
+      if (
+        doc.hasSections() &&
+        doc.isAttribute('toc-class') &&
+        doc.isAttribute('toc') &&
+        doc.isAttribute('toc-placement', 'auto')
+      ) {
         classes = [doc.getDoctype(), doc.getAttribute('toc-class'), `toc-${doc.getAttribute('toc-position', 'header')}`]
       } else {
         classes = [doc.getDoctype()]

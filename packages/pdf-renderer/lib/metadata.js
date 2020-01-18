@@ -40,5 +40,5 @@ const addMetadata = async (pdfDoc, attributes) => {
 }
 
 module.exports = {
-  addMetadata: addMetadata
+  addMetadata: addMetadata,
 }

@@ -4,7 +4,15 @@ const ospath = require('path')
 const stemContent = require('./stem')
 
 const { layer: faLayer, icon: faIcon, dom: faDom, library: faLibrary } = require('@fortawesome/fontawesome-svg-core')
-const { faCircle, faInfoCircle, faExclamationCircle, faQuestionCircle, faExclamationTriangle, faHandPaper, fas } = require('@fortawesome/free-solid-svg-icons')
+const {
+  faCircle,
+  faInfoCircle,
+  faExclamationCircle,
+  faQuestionCircle,
+  faExclamationTriangle,
+  faHandPaper,
+  fas,
+} = require('@fortawesome/free-solid-svg-icons')
 const { faLightbulb, far } = require('@fortawesome/free-regular-svg-icons')
 const { fab } = require('@fortawesome/free-brands-svg-icons')
 faLibrary.add(fas, far, fab)
@@ -33,9 +41,9 @@ const styles = (node) => {
   if (stylesheetAttribute && stylesheetAttribute.trim() !== '') {
     return stylesheetAttribute
       .split(';')
-      .map(value => value.trim())
-      .filter(value => value !== '')
-      .map(stylesheet => {
+      .map((value) => value.trim())
+      .filter((value) => value !== '')
+      .map((stylesheet) => {
         let href
         if (ospath.isAbsolute(stylesheet)) {
           href = stylesheet
@@ -94,12 +102,17 @@ const hasTitlePage = (node) => {
 }
 
 const footnotes = (node) => {
-  if (node.hasFootnotes() && !(node.isAttribute('nofootnotes'))) {
+  if (node.hasFootnotes() && !node.isAttribute('nofootnotes')) {
     return `<div id="footnotes">
         <hr/>
-        ${node.getFootnotes().map((footnote) => `<div class="footnote" id="_footnotedef_${footnote.getIndex()}">
+        ${node
+          .getFootnotes()
+          .map(
+            (footnote) => `<div class="footnote" id="_footnotedef_${footnote.getIndex()}">
         <a href="#_footnoteref_${footnote.getIndex()}">${footnote.getIndex()}</a>. ${footnote.getText()}
-        </div>`).join('')}
+        </div>`
+          )
+          .join('')}
       </div>`
   }
   return ''
@@ -114,8 +127,8 @@ ${faDom.css()}
   return ''
 }
 
-
-const isSvgIconEnabled = (node) => node.getDocument().isAttribute('icontype', 'svg') || node.getDocument().isAttribute('icons', 'font')
+const isSvgIconEnabled = (node) =>
+  node.getDocument().isAttribute('icontype', 'svg') || node.getDocument().isAttribute('icons', 'font')
 
 const titlePage = (node) => {
   if (node.getDocumentTitle()) {
@@ -158,7 +171,7 @@ ${baseConverter.$convert_outline(node)}
   return ''
 }
 
-module.exports = (baseConverter, {file, contentCatalog, config}) => {
+module.exports = (baseConverter, { file, contentCatalog, config }) => {
   return {
     embedded: (node, transform, opts) => {
       return `${titlePage(node)}
@@ -168,38 +181,38 @@ ${tocHeader(baseConverter, node, transform, opts)}
   ${baseConverter.$convert(node, transform, opts)}
 </div>
 ${footnotes(node)}
-${stemContent.content(node)}`      
+${stemContent.content(node)}`
     },
-  admonition: (node, transform, opts) => {
-    const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
-    const name = node.getAttribute('name')
-    const titleElement = node.getTitle() ? `<div class="title">${node.getTitle()}</div>\n` : ''
-    let label
-    //TODO figure out what to do: force text admonition labels for now
-    // if (node.getDocument().hasAttribute('icons')) {
-    //   if (node.getDocument().isAttribute('icons', 'font') && !node.hasAttribute('icon')) {
-    //     let icon
-    //     if (name === 'note') {
-    //       icon = faNoteIcon
-    //     } else if (name === 'important') {
-    //       icon = faImportantIcon
-    //     } else if (name === 'caution') {
-    //       icon = faCautionIcon
-    //     } else if (name === 'tip') {
-    //       icon = faTipIcon
-    //     } else if (name === 'warning') {
-    //       icon = faWarningIcon
-    //     } else {
-    //       icon = faDefaultIcon
-    //     }
-    //     label = icon.html
-    //   } else {
-    //     label = `<img src="${node.getIconUri(name)}" alt="${node.getAttribute('textlabel')}"/>`
-    //   }
-    // } else {
+    admonition: (node, transform, opts) => {
+      const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
+      const name = node.getAttribute('name')
+      const titleElement = node.getTitle() ? `<div class="title">${node.getTitle()}</div>\n` : ''
+      let label
+      //TODO figure out what to do: force text admonition labels for now
+      // if (node.getDocument().hasAttribute('icons')) {
+      //   if (node.getDocument().isAttribute('icons', 'font') && !node.hasAttribute('icon')) {
+      //     let icon
+      //     if (name === 'note') {
+      //       icon = faNoteIcon
+      //     } else if (name === 'important') {
+      //       icon = faImportantIcon
+      //     } else if (name === 'caution') {
+      //       icon = faCautionIcon
+      //     } else if (name === 'tip') {
+      //       icon = faTipIcon
+      //     } else if (name === 'warning') {
+      //       icon = faWarningIcon
+      //     } else {
+      //       icon = faDefaultIcon
+      //     }
+      //     label = icon.html
+      //   } else {
+      //     label = `<img src="${node.getIconUri(name)}" alt="${node.getAttribute('textlabel')}"/>`
+      //   }
+      // } else {
       label = `<div class="title">${node.getAttribute('textlabel')}</div>`
-    // }
-    return `<div${idAttribute} class="admonitionblock ${name}${node.getRole() ? node.getRole() : ''}">
+      // }
+      return `<div${idAttribute} class="admonitionblock ${name}${node.getRole() ? node.getRole() : ''}">
 <table>
 <tr>
 <td class="icon icon-${name}">
@@ -211,120 +224,120 @@ ${titleElement}${node.getContent()}
 </tr>
 </table>
 </div>`
-  },
-  inline_callout: (node, transform, opts) => {
-    return `<i class="conum" data-value="${node.text}"></i>`
-  },
-  inline_image: (node, transform, opts) => {
-    if (node.getType() === 'icon' && isSvgIconEnabled(node)) {
-      const transform = {}
-      if (node.hasAttribute('rotate')) {
-        transform.rotate = node.getAttribute('rotate')
-      }
-      if (node.hasAttribute('flip')) {
-        const flip = node.getAttribute('flip')
-        if (flip === 'vertical' || flip === 'y' || flip === 'v') {
-          transform.flipY = true
-        } else {
-          transform.flipX = true
+    },
+    inline_callout: (node, transform, opts) => {
+      return `<i class="conum" data-value="${node.text}"></i>`
+    },
+    inline_image: (node, transform, opts) => {
+      if (node.getType() === 'icon' && isSvgIconEnabled(node)) {
+        const transform = {}
+        if (node.hasAttribute('rotate')) {
+          transform.rotate = node.getAttribute('rotate')
         }
-      }
-      const options = {}
-      options.transform = transform
-      if (node.hasAttribute('title')) {
-        options.title = node.getAttribute('title')
-      }
-      options.classes = []
-      if (node.hasAttribute('size')) {
-        options.classes.push(`fa-${node.getAttribute('size')}`)
-      }
-      if (node.getRoles() && node.getRoles().length > 0) {
-        options.classes = options.classes.concat(node.getRoles().map(value => value.trim()))
-      }
-      const meta = {}
-      const target = node.getTarget()
-      let iconName = target
-      if (node.hasAttribute('set')) {
-        meta.prefix = node.getAttribute('set')
-      } else if (target.includes('@')) {
-        const parts = target.split('@')
-        iconName = parts[0]
-        meta.prefix = parts[1]
-      }
-      meta.iconName = iconName
-      const icon = faIcon(meta, options)
-      if (icon) {
-        return icon.html
-      }
-    } else {
-      return baseConverter.$convert(baseConverter, node, transform, opts)
-    }
-  },
-  colist: (node, transform, opts) => {
-    const result = []
-    const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
-    let classes = ['colist']
-    if (node.getStyle()) {
-      classes = classes.concat(node.getStyle())
-    }
-    if (node.getRole()) {
-      classes = classes.concat(node.getRole())
-    }
-    const classAttribute = ` class="${classes.join(' ')}"`
-    result.push(`<div${idAttribute}${classAttribute}>`)
-    if (node.getTitle()) {
-      result.push(`<div class="title">${node.getTitle()}</div>`)
-    }
-    if (node.getDocument().hasAttribute('icons') || node.getDocument().isAttribute('icontype', 'svg')) {
-      result.push('<table>')
-      let num = 0
-      const svgIcons = isSvgIconEnabled(node)
-      let numLabel
-      node.getItems().forEach((item) => {
-        num += 1
-        if (svgIcons) {
-          numLabel = `<i class="conum" data-value="${num}"></i><b>${num}</b>`
-        } else {
-          numLabel = `<i class="conum" data-value="${num}"></i><b>${num}</b>`
+        if (node.hasAttribute('flip')) {
+          const flip = node.getAttribute('flip')
+          if (flip === 'vertical' || flip === 'y' || flip === 'v') {
+            transform.flipY = true
+          } else {
+            transform.flipX = true
+          }
         }
-        result.push(`<tr>
+        const options = {}
+        options.transform = transform
+        if (node.hasAttribute('title')) {
+          options.title = node.getAttribute('title')
+        }
+        options.classes = []
+        if (node.hasAttribute('size')) {
+          options.classes.push(`fa-${node.getAttribute('size')}`)
+        }
+        if (node.getRoles() && node.getRoles().length > 0) {
+          options.classes = options.classes.concat(node.getRoles().map((value) => value.trim()))
+        }
+        const meta = {}
+        const target = node.getTarget()
+        let iconName = target
+        if (node.hasAttribute('set')) {
+          meta.prefix = node.getAttribute('set')
+        } else if (target.includes('@')) {
+          const parts = target.split('@')
+          iconName = parts[0]
+          meta.prefix = parts[1]
+        }
+        meta.iconName = iconName
+        const icon = faIcon(meta, options)
+        if (icon) {
+          return icon.html
+        }
+      } else {
+        return baseConverter.$convert(baseConverter, node, transform, opts)
+      }
+    },
+    colist: (node, transform, opts) => {
+      const result = []
+      const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''
+      let classes = ['colist']
+      if (node.getStyle()) {
+        classes = classes.concat(node.getStyle())
+      }
+      if (node.getRole()) {
+        classes = classes.concat(node.getRole())
+      }
+      const classAttribute = ` class="${classes.join(' ')}"`
+      result.push(`<div${idAttribute}${classAttribute}>`)
+      if (node.getTitle()) {
+        result.push(`<div class="title">${node.getTitle()}</div>`)
+      }
+      if (node.getDocument().hasAttribute('icons') || node.getDocument().isAttribute('icontype', 'svg')) {
+        result.push('<table>')
+        let num = 0
+        const svgIcons = isSvgIconEnabled(node)
+        let numLabel
+        node.getItems().forEach((item) => {
+          num += 1
+          if (svgIcons) {
+            numLabel = `<i class="conum" data-value="${num}"></i><b>${num}</b>`
+          } else {
+            numLabel = `<i class="conum" data-value="${num}"></i><b>${num}</b>`
+          }
+          result.push(`<tr>
           <td>${numLabel}</td>
           <td>${item.getText()}${item['$blocks?']() ? `\n ${item.getContent()}` : ''}</td>
           </tr>`)
-      })
-      result.push('</table>')
-    } else {
-      result.push('<ol>')
+        })
+        result.push('</table>')
+      } else {
+        result.push('<ol>')
 
-      node.getItems().forEach((item) => {
-        result.push(`<li>
+        node.getItems().forEach((item) => {
+          result.push(`<li>
 <p>${item.getText()}</p>${item['$blocks?']() ? `\n ${item.getContent()}` : ''}`)
-      })
-      result.push('</ol>')
-    }
-    result.push('</div>')
-    return result.join('\n')
-  },
-  page_break: () => {
-    // Paged.js does not support inline style: https://gitlab.pagedmedia.org/tools/pagedjs/issues/146
-    return '<div class="page-break" style="break-after: page;"></div>'
-  },
-  preamble: (node, transform, opts) => {
-    const doc = node.getDocument()
-    let toc
-    if (doc.isAttribute('toc-placement', 'preamble') && doc.hasSections() && doc.hasAttribute('toc')) {
-      toc = `<div id="toc" class="${doc.getAttribute('toc-class', 'toc')}">
+        })
+        result.push('</ol>')
+      }
+      result.push('</div>')
+      return result.join('\n')
+    },
+    page_break: () => {
+      // Paged.js does not support inline style: https://gitlab.pagedmedia.org/tools/pagedjs/issues/146
+      return '<div class="page-break" style="break-after: page;"></div>'
+    },
+    preamble: (node, transform, opts) => {
+      const doc = node.getDocument()
+      let toc
+      if (doc.isAttribute('toc-placement', 'preamble') && doc.hasSections() && doc.hasAttribute('toc')) {
+        toc = `<div id="toc" class="${doc.getAttribute('toc-class', 'toc')}">
 <div id="toctitle">${doc.getAttribute('toc-title')}</div>
 ${baseConverter.$convert_outline(doc)}
 </div>`
-    } else {
-      toc = ''
-    }
-    return `<div id="preamble">
+      } else {
+        toc = ''
+      }
+      return `<div id="preamble">
 <div class="sectionbody">
 ${node.getContent()}
 </div>${toc}
 </div>`
-  },
-}
+    },
+  }
 }

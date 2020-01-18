@@ -64,5 +64,5 @@ module.exports = {
 <script type="text/javascript" src="${mathjaxFileUrl}"></script>`
     }
     return ''
-  }
+  },
 }

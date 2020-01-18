@@ -6,7 +6,7 @@ const { addMetadata } = require('./metadata')
 const server = require('./server')
 
 async function convertToPdf (pages, catalogs) {
-  const {browser, server} = await setup(catalogs)
+  const { browser, server } = await setup(catalogs)
   let result
   try {
     result = await Promise.all(pages.map((file) => convert(file, browser)))
@@ -24,40 +24,41 @@ async function setup (catalogs) {
   const preview = false
   const puppeteerConfig = {
     headless: !preview,
-    args: ['--no-sandbox', '--allow-file-access-from-files']
+    args: ['--no-sandbox', '--allow-file-access-from-files'],
   }
   if (preview) {
     Object.assign(puppeteerConfig, { defaultViewport: null })
   }
   const browser = await puppeteer.launch(puppeteerConfig)
   try {
-   return {browser, server : s}
+    return { browser, server: s }
   } catch (Error) {
     //TODO something
     throw Error
   }
-
 }
 
-async function convert(file, browser) {
+async function convert (file, browser) {
   const url = `http://localhost:8081/${file.out.path}`
   const attributes = file.asciidoc.attributes
   const htmldoc = file.contents.toString()
   const page = await browser.newPage()
   try {
     page
-      .on('pageerror', err => {
+      .on('pageerror', (err) => {
         console.error('> An uncaught exception happened within the HTML page: ' + err.toString())
       })
-      .on('error', err => {
+      .on('error', (err) => {
         console.error('Page crashed: ' + err.toString())
       })
     await page.goto(url, { waitUntil: 'networkidle0' })
-    const watchDog = page.waitForFunction('window.AsciidoctorPDF === undefined || window.AsciidoctorPDF.status === undefined || window.AsciidoctorPDF.status === "ready"')
+    const watchDog = page.waitForFunction(
+      'window.AsciidoctorPDF === undefined || window.AsciidoctorPDF.status === undefined || window.AsciidoctorPDF.status === "ready"'
+    )
     await watchDog
     const pdfOptions = {
       printBackground: true,
-      preferCSSPageSize: true
+      preferCSSPageSize: true,
     }
     const pdfWidth = attributes['pdf-width']
     if (pdfWidth) {
@@ -80,7 +81,7 @@ async function convert(file, browser) {
     pdfDoc = await addOutline(pdfDoc, htmldoc, attributes)
     pdfDoc = await addMetadata(pdfDoc, attributes)
     pdf = await pdfDoc.save()
-    const pdfFile = {src: Object.assign({}, file.src)}    
+    const pdfFile = { src: Object.assign({}, file.src) }
     const removeHidden = pdfFile.src.basename[0] == '_' ? 1 : 0
     pdfFile.src.basename = pdfFile.src.basename.slice(removeHidden, -4) + 'pdf'
     if (removeHidden) {
@@ -95,6 +96,5 @@ async function convert(file, browser) {
     await page.close()
   }
 }
-
 
 module.exports = convertToPdf

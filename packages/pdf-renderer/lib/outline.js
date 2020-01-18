@@ -19,12 +19,10 @@ function getOutline (doc, node, depth) {
   const sections = doc('h1, h2, h3, h4, h5, h6', node)
   const sectionArray = toArray(sections)
 
-  const pruned = sectionArray
-    .map(section => doc(section))
-    .filter(section => section.is('h1') || section.attr('id'))
+  const pruned = sectionArray.map((section) => doc(section)).filter((section) => section.is('h1') || section.attr('id'))
   var index = 0
 
-  function outlineLevel(level) {
+  function outlineLevel (level) {
     const result = []
     while (index < pruned.length) {
       section = pruned[index]
@@ -36,7 +34,7 @@ function getOutline (doc, node, depth) {
           result.push({
             title,
             destination: id,
-            children: outlineLevel(level + 1)
+            children: outlineLevel(level + 1),
           })
         }
       } else if (section.is(`h${level - 1}`)) {
@@ -50,7 +48,7 @@ function getOutline (doc, node, depth) {
   return outlineLevel(1)
 }
 
-function toArray(collection) {
+function toArray (collection) {
   return [].slice.call(collection)
 }
 
@@ -79,7 +77,7 @@ function buildPdfObjectsForOutline (layer, context) {
     const pdfObject = new Map([
       [PDFName.of('Title'), PDFHexString.fromText(item.title)],
       [PDFName.of('Dest'), PDFName.of(item.destination)],
-      [PDFName.of('Parent'), item.parentRef]
+      [PDFName.of('Parent'), item.parentRef],
     ])
     if (prev) {
       pdfObject.set(PDFName.of('Prev'), prev.ref)
@@ -130,11 +128,14 @@ async function addOutline (pdfDoc, htmldoc, attributes) {
   setRefsForOutlineItems(outline, context, outlineRef)
   buildPdfObjectsForOutline(outline, context)
 
-  const outlineObject = PDFDict.fromMapWithContext(new Map([
-    [PDFName.of('First'), outline[0].ref],
-    [PDFName.of('Last'), outline[outline.length - 1].ref],
-    [PDFName.of('Count'), PDFNumber.of(countChildrenOfOutline(outline))]
-  ]), context)
+  const outlineObject = PDFDict.fromMapWithContext(
+    new Map([
+      [PDFName.of('First'), outline[0].ref],
+      [PDFName.of('Last'), outline[outline.length - 1].ref],
+      [PDFName.of('Count'), PDFNumber.of(countChildrenOfOutline(outline))],
+    ]),
+    context
+  )
   context.assign(outlineRef, outlineObject)
 
   pdfDoc.catalog.set(PDFName.of('Outlines'), outlineRef)
@@ -142,5 +143,5 @@ async function addOutline (pdfDoc, htmldoc, attributes) {
 }
 
 module.exports = {
-  addOutline: addOutline
+  addOutline: addOutline,
 }
