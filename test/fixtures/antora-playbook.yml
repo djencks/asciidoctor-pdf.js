@@ -1,0 +1,11 @@
+site:
+  title: Antora Example fixtures
+content:
+  sources:
+  - url: ./../../
+    start_path: test/fixtures/component
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+    start_path: pdf

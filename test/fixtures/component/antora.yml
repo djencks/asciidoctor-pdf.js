@@ -1,0 +1,5 @@
+name: component 
+title: Component component 
+version: '1.0' 
+start_page: ROOT:title-page.adoc 
+nav: 
