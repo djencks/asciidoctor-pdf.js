@@ -1,16 +1,25 @@
 /* eslint-env mocha */
 'use strict'
 
+//command line to generate processed html from test/fixtures project:
+//$ANTORA_DEV test/fixtures/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator \
+//  --ui-bundle-url ../../antora/antora-ui-default/build/ui-pdf-bundle.zip --ui-start-path pdf
 const fs = require('fs')
 const { PDFDocument, PDFName, PDFDict } = require('pdf-lib')
 const chai = require('chai')
-const rimraf = require('rimraf')
 const ospath = require('path')
 const expect = chai.expect
 const dirtyChai = require('dirty-chai')
 chai.use(dirtyChai)
 require('./helper.js')(chai)
 
+const vfs = require('vinyl-fs')
+const { obj: map } = require('through2')
+const { posix: path } = ospath
+const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
+const File = require('./file')
+const convertToPdf = require('@antora-pdf/pdf-renderer')
+const CONTENT_GLOB = '**/*'
 // const asciidoctor = require('@asciidoctor/core')()
 // const converter = require('../lib/converter.js')
 // const templates = require('../lib/document/templates.js')
@@ -19,6 +28,74 @@ require('./helper.js')(chai)
 describe('PDF converter', function () {
   // launching a headless browser (especially on Travis) can take several tens of seconds
   this.timeout(30000)
+
+  let pdfDocs
+
+  before(async () => {
+    const files = await readFilesFromWorktree(__dirname, 'fixtures/site')
+    const catalog = { getFiles: () => files }
+    const pages = catalog.filter((file) => file.relative.endswith('.html')).map((file) => {
+      file.out = { path: file.relative }
+      return file
+    })
+    const pdfPages = await convertToPdf(pages, [catalog])
+    pdfDocs = pdfPages.reduce((accum, page) => {
+      accum[page.relative] = PDFDocument.load(page.contents)
+      return accum
+    }, {})
+    console.log('pdfDocs: ', pdfDocs.entries().map(([a, b]) => a))
+  })
+
+  //borrowed from aggregate-content.js
+  function readFilesFromWorktree (worktreePath, startPath) {
+    const base = path.join(worktreePath, startPath)
+    return fs
+      .stat(base)
+      .catch(() => {
+        throw new Error(`the start path '${startPath}' does not exist`)
+      })
+      .then((stat) => {
+        if (!stat.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
+        return new Promise((resolve, reject) =>
+          vfs
+            .src(CONTENT_GLOB, { base, cwd: base, removeBOM: false })
+            .on('error', reject)
+            .pipe(relativizeFiles())
+            .pipe(collectFiles(resolve))
+        )
+      })
+  }
+
+  /**
+   * Transforms the path of every file in the stream to a relative posix path.
+   *
+   * Applies a mapping function to all files in the stream so they end up with a
+   * posixified path relative to the file's base instead of the filesystem root.
+   * This mapper also filters out any directories (indicated by file.isNull())
+   * that got caught up in the glob.
+   */
+  function relativizeFiles () {
+    return map((file, enc, next) => {
+      if (file.isNull()) {
+        next()
+      } else {
+        next(
+          null,
+          new File({
+            path: posixify ? posixify(file.relative) : file.relative,
+            contents: file.contents,
+            stat: file.stat,
+            src: { abspath: file.path },
+          })
+        )
+      }
+    })
+  }
+
+  function collectFiles (done) {
+    const accum = []
+    return map((file, enc, next) => accum.push(file) && next(), () => done(accum)) // prettier-ignore
+  }
 
   const getOutlineRefs = (pdfDoc) => {
     const values = pdfDoc.context.lookup(pdfDoc.catalog.get(PDFName.of('Outlines'))).context.indirectObjects.values()
@@ -45,10 +122,7 @@ describe('PDF converter', function () {
   }
 
   const convert = async (inputFile, outputFile, options) => {
-    const opts = options || {}
-    opts.to_file = outputFile
-    await converter.convert(asciidoctor, inputFile, opts, false)
-    return PDFDocument.load(fs.readFileSync(outputFile))
+    return pdfDocs[inputFile]
   }
 
   it('should not encode HTML entity in the PDF outline', async () => {
@@ -112,14 +186,15 @@ describe('PDF converter', function () {
     expect(refs[0].get(PDFName.of('Dest')).encodedName).to.equal('/_section_1')
   })
 
-  it('should be able to set background color of title page', async () => {
-    const opts = {}
-    const outputFile = `${__dirname}/output/title-page-background-color.pdf`
-    opts.to_file = outputFile
-    opts.attributes = {
-      stylesheet: `${__dirname}/../css/asciidoctor.css;${__dirname}/../css/document.css;${__dirname}/../css/features/book.css;${__dirname}/fixtures/black-title-page.css`,
-    }
-    await converter.convert(asciidoctor, `${__dirname}/fixtures/title-page.adoc`, opts, false)
-    expect(outputFile).to.be.visuallyIdentical('title-page-background-color.pdf')
-  })
+  // it('should be able to set background color of title page', async () => {
+  //   const opts = {}
+  //   const outputFile = `${__dirname}/output/title-page-background-color.pdf`
+  //   opts.to_file = outputFile
+  //   opts.attributes = {
+  //     stylesheet: `${__dirname}/../css/asciidoctor.css;${__dirname}/../css/document.css;
+  // ${__dirname}/../css/features/book.css;${__dirname}/fixtures/black-title-page.css`,
+  //   }
+  //   await converter.convert(asciidoctor, `${__dirname}/fixtures/title-page.adoc`, opts, false)
+  //   expect(outputFile).to.be.visuallyIdentical('title-page-background-color.pdf')
+  // })
 })

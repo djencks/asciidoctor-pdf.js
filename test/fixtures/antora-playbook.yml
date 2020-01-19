@@ -3,6 +3,7 @@ site:
 content:
   sources:
   - url: ./../../
+    branches: antora
     start_path: test/fixtures/component
 ui:
   bundle:
