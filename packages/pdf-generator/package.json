@@ -38,5 +38,9 @@
     "@antora/ui-loader": "2.3.0-alpha.2",
     "@antora-pdf/pdf-asciidoc-templates": "1.0.0-alpha.4",
     "@antora-pdf/pdf-renderer": "1.0.0-alpha.4"
+  },
+  "devDependencies": {
+    "pixelmatch":"^5.1.0",
+    "pngjs": "^3.4.0"
   }
 }

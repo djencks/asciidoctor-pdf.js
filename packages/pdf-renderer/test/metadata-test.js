@@ -1,11 +1,16 @@
-/* global it, describe */
+/* eslint-env mocha */
+'use strict'
+
 const { PDFDocument, PDFName, PDFHexString } = require('pdf-lib')
 const chai = require('chai')
 const expect = chai.expect
 const dirtyChai = require('dirty-chai')
 chai.use(dirtyChai)
 
-const asciidoctor = require('@asciidoctor/core')()
+// const asciidoctor = require('@asciidoctor/core')()
+const loadAsciiDoc = require('@antora/asciidoc-loader')
+const templates = require('@antora-pdf/pdf-asciidoc-templates')
+const { bodyAttributesProcessor } = require('@antora-pdf/pdf-asciidoc-templates')
 const { addMetadata } = require('../lib/metadata.js')
 const { version: pkgVersion } = require('../package.json')
 
@@ -34,13 +39,49 @@ const expectEqual = (pdf, metadataKey, expectedValue) => {
   }
 }
 
-const toPdfWithMetadata = async (content, options) => {
-  const doc = asciidoctor.load(content, options)
-  const pdfDoc = await PDFDocument.create()
-  return addMetadata(pdfDoc, doc)
-}
-
 describe('PDF metadata', () => {
+  let inputFile
+  const asciidocConfig = { converters: [templates], extensions: [bodyAttributesProcessor] }
+  const contentCatalog = { getComponent: () => undefined }
+
+  beforeEach(() => {
+    inputFile = {
+      path: 'modules/module-a/pages/page-a.adoc',
+      dirname: 'modules/module-a/pages',
+      src: {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'page-a.adoc',
+        basename: 'page-a.adoc',
+        stem: 'page-a',
+        extname: '.adoc',
+      },
+      pub: {
+        url: '/component-a/module-a/page-a.html',
+        moduleRootPath: '.',
+        rootPath: '../..',
+      },
+    }
+  })
+
+  const setInputFileContents = (contents) => {
+    inputFile.contents = Buffer.from(contents)
+  }
+
+  const loadAsciidoc = (contents, cc = contentCatalog, ac = asciidocConfig) => {
+    setInputFileContents(contents)
+    const doc = loadAsciiDoc(inputFile, cc, ac)
+    return doc
+  }
+
+  const toPdfWithMetadata = async (content, options) => {
+    const doc = loadAsciidoc(content, contentCatalog, options)
+    const pdfDoc = await PDFDocument.create()
+    return addMetadata(pdfDoc, doc.getAttributes())
+  }
+
   it('should add metadata from attributes', async () => {
     const pdfWithMetadata = await toPdfWithMetadata(`= The Dangerous and Thrilling Documentation Chronicles
 Guillaume Grossetie <ggrossetie@asciidoctor.org>
@@ -54,7 +95,7 @@ content`)
     expectEqual(pdfWithMetadata, 'Subject', '')
     expectEqual(pdfWithMetadata, 'Keywords', 'pdf asciidoctor doc')
     expectEqual(pdfWithMetadata, 'Producer', 'Guillaume Grossetie')
-    expectEqual(pdfWithMetadata, 'Creator', `Asciidoctor PDF ${pkgVersion}`)
+    expectEqual(pdfWithMetadata, 'Creator', `Antora PDF ${pkgVersion}`)
   })
 
   it('should add epoch unix at start date if reproducible attribute is set', async () => {
@@ -88,7 +129,7 @@ content`)
   it('should set Producer field to value of Creator field by default', async () => {
     const pdfWithMetadata = await toPdfWithMetadata('hello')
 
-    const creator = `Asciidoctor PDF ${pkgVersion}`
+    const creator = `Antora PDF ${pkgVersion}`
     expectEqual(pdfWithMetadata, 'Creator', creator)
     expectEqual(pdfWithMetadata, 'Producer', creator)
   })

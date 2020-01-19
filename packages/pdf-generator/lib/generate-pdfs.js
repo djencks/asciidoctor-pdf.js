@@ -8,10 +8,10 @@ const createPageComposer = require('@antora/page-composer')
 const loadUi = require('@antora/ui-loader')
 const publishSite = require('@antora/site-publisher')
 const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
-const bodyAttributesProcessor = require('@antora-pdf/pdf-asciidoc-templates/lib/body-attributes-processor')
 const classifyContent = require('@antora-pdf/pdf-content-classifier')
 const convertToPdf = require('@antora-pdf/pdf-renderer')
 const pdfTemplate = require('@antora-pdf/pdf-asciidoc-templates')
+const { bodyAttributesProcessor } = require('@antora-pdf/pdf-asciidoc-templates')
 
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)

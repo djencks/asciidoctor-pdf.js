@@ -23,7 +23,7 @@ const addMetadata = async (pdfDoc, attributes) => {
   }
   const authors = attributes.authors || ''
   const publisher = attributes.publisher || ''
-  const creator = `Antora/Asciidoctor PDF ${pkg.version}`
+  const creator = `Antora PDF ${pkg.version}`
   pdfDoc.setTitle(attributes.doctitle || '')
   pdfDoc.setAuthor(authors)
   pdfDoc.setSubject(attributes.subject || '')

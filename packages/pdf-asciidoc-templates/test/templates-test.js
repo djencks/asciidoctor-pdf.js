@@ -132,35 +132,6 @@ Guillaume Grossetie
     })
   })
 
-  // it('should replace the default stylesheet with a custom stylesheet', () => {
-  //   const doc = loadAsciidoc('[.greetings]#Hello world#', {
-  //     attributes: { stylesheet: `${__dirname}/fixtures/custom.css` },
-  //   })
-  //   const $ = cheerio.load(doc.convert({ header_footer: true }))
-  //   expect($('head').html()).to.not.have.string('Asciidoctor default stylesheet')
-  //   expect($(`head > link[href="${__dirname}/fixtures/custom.css"]`).length).to.equal(1)
-  // })
-
-  // it('should load multiple stylesheets', () => {
-  //   const doc = loadAsciidoc('Hello world', {
-  //     attributes: { stylesheet: `${__dirname}/fixtures/variable.css; ;${__dirname}/fixtures/theme.css;` },
-  //   })
-  //   const $ = cheerio.load(doc.convert({ header_footer: true }))
-  //   expect($('head').html()).to.not.have.string('Asciidoctor default stylesheet')
-  //   expect($(`head > link[href="${__dirname}/fixtures/variable.css"]`).length).to.equal(1)
-  //   expect($(`head > link[href="${__dirname}/fixtures/theme.css"]`).length).to.equal(1)
-  // })
-
-  // it('should resolve the stylesheet when using a relative path', () => {
-  //   const doc = loadAsciidoc('[.greetings]#Hello world#', {
-  //     attributes: { stylesheet: '@asciidoctor/core/dist/css/asciidoctor.css' },
-  //   })
-  //   const $ = cheerio.load(doc.convert({ header_footer: true }))
-  //   expect($('head').html()).to.not.have.string('Asciidoctor default stylesheet')
-  //   const href = ospath.resolve(`${__dirname}/../node_modules/@asciidoctor/core/dist/css/asciidoctor.css`)
-  //   expect($(`head > link[href="${href}"]`).length).to.equal(1)
-  // })
-
   describe('Stem', () => {
     const fileUrl = require('file-url')
     const mathjaxFileUrl = fileUrl(require.resolve('mathjax/es5/tex-chtml-full.js'))

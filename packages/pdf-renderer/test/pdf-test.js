@@ -1,4 +1,6 @@
-/* global it, describe, before, after */
+/* eslint-env mocha */
+'use strict'
+
 const fs = require('fs')
 const { PDFDocument, PDFName, PDFDict } = require('pdf-lib')
 const chai = require('chai')
@@ -7,32 +9,16 @@ const ospath = require('path')
 const expect = chai.expect
 const dirtyChai = require('dirty-chai')
 chai.use(dirtyChai)
-require('./helper.js/index.js')(chai)
+require('./helper.js')(chai)
 
-const asciidoctor = require('@asciidoctor/core')()
-const converter = require('../lib/converter.js')
-const templates = require('../lib/document/templates.js')
-converter.registerTemplateConverter(asciidoctor, templates)
+// const asciidoctor = require('@asciidoctor/core')()
+// const converter = require('../lib/converter.js')
+// const templates = require('../lib/document/templates.js')
+// converter.registerTemplateConverter(asciidoctor, templates)
 
 describe('PDF converter', function () {
-  // launching an headless browser (especially on Travis) can take several tens of seconds
+  // launching a headless browser (especially on Travis) can take several tens of seconds
   this.timeout(30000)
-
-  before(() => {
-    const outputDir = ospath.join(__dirname, 'output')
-    rimraf.sync(outputDir)
-    fs.mkdirSync(outputDir)
-  })
-
-  after(function () {
-    // clean the output directory if there's no failed tests (and if the DEBUG environment variable is absent).
-    const failedTests = this.test.parent.tests.filter((t) => t.state === 'failed')
-    if (failedTests.length === 0 && typeof process.env.DEBUG === 'undefined') {
-      const outputDir = ospath.join(__dirname, 'output')
-      rimraf.sync(outputDir)
-      fs.mkdirSync(outputDir)
-    }
-  })
 
   const getOutlineRefs = (pdfDoc) => {
     const values = pdfDoc.context.lookup(pdfDoc.catalog.get(PDFName.of('Outlines'))).context.indirectObjects.values()
