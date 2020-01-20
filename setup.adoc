@@ -9,10 +9,19 @@ This project adapts the principles behind asciidoctor-pdf.js to work in Antora.
 
 Current output:
 
-* One pdf per output html page.
+* One pdf per output html page, or explicit configuration in component descriptors.
 * pdfs are added to the `_attachments` directory in the component, in the same directory structure as the pages.
 
 == How to set this up
+
+The (relative) paths shown in this guide all reflect the relative project layouts on my system.
+
+----
+~/projects/antora/antora
+~/projects/asciidoctor/asciidoctor-pdf.js
+----
+
+You will need to adjust paths to suit the project locations you choose.
 
 === Antora
 
@@ -25,24 +34,20 @@ You need a local copy of Antora with several MRs applied.
 The plausible way to get this is by cloning my link:https://gitlab.com/djencks/antora[Antora fork] and checking out the `issue-522-347-548-asciidoctor-2-delegating-converters-explicit-converters` branch.
 Note the name of this branch no longer reflects it's contents.
 
-Run yarn to set up the node_modules monorepo in antora.
-
 === This project, asciidoctor-pdf.js, antora branch
 
-After you've cloned (from my fork) and switched to this branch, run yarn to set up the monorepo here.
+After you've cloned (from my fork) and switched to this branch, modify this projects root package.json to link the projects.
+The monorepo configuration is at the end of package.json:
 
-Now you have to link the local patched Antora into this project.
+----
+"workspaces": [
+    "packages/*",
+    "../../antora/antora/packages/*"
+  ]
+----
 
-Find your @antora in the antora monorepo, say `/Users/david/projects/antora/antora/node_modules/@antora`
-
-Remove or move your `node_modules/@antora` in this project.
-
-Symlink to the local antora: `ln -s /Users/david/projects/antora/antora/node_modules/@antora node_modules/\@antora`
-
-BEWARE! 
-Whenever you run `yarn` here, you'll need to run `yarn` in antora!
-`yarn` here follows the symlink and installs the released version of antora into antora's node_modules.
-Better, move `node_modules/@antora` out of the way before running yarn, and back afterwards.
+Modify the second line to contain the relative path between projects in your installation.
+Finally run yarn in this project to set up the monorepo here.
 
 == Set up a way to run your local copy of antora
 
@@ -95,7 +100,7 @@ By commenting out a couple lines in converter.js you can see the same thing Chro
 
 == Next steps
 
-? tests??
+cli tests? This is awkward until there is an easier ui bundle generator.
 
 It's presumably possible to automatically convert nav.adoc files to "`including files`", but I'd like to see some real world experience with manual conversions before trying to implement this.
 
@@ -107,4 +112,4 @@ An overview of how the paged media spec sets things up is here: link:https://www
 
 For Antora-pdf that is done in the UI bundle, in the `pdf/css/document.css` and `pdf/css/title-document-numbering.css` files.
 
-Asciidoctor-pdf.js has some additional files for other circumstances, that I have not understood or integrated.
+There are some additional .css files referenced when the document calls for them.
