@@ -1,10 +1,12 @@
 /* eslint-env mocha */
 'use strict'
 
+//Unlikely this way to test will be useful/usable.
+
 //command line to generate processed html from test/fixtures project:
 //$ANTORA_DEV test/fixtures/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator \
 //  --ui-bundle-url ../../antora/antora-ui-default/build/ui-pdf-bundle.zip --ui-start-path pdf
-const fs = require('fs')
+// const fs = require('fs')
 const { PDFDocument, PDFName, PDFDict } = require('pdf-lib')
 const chai = require('chai')
 const ospath = require('path')

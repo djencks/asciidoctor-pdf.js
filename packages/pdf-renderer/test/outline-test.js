@@ -31,65 +31,7 @@ const { addOutline } = require('../lib/outline.js')
 const fixturesHtml = `${__dirname}/fixtures/component/1.0`
 const fixturesPdf = `${fixturesHtml}/_attachments`
 
-describe('PDF outline', function () {
-
-  // let pdfDocs
-
-  // before(async () => {
-  // })
-
-  // //borrowed from aggregate-content.js
-  // function readFilesFromWorktree (worktreePath, startPath) {
-  //   const base = path.join(worktreePath, startPath)
-  //   console.log('base: ', base)
-  //   // return fs
-  //   //   .stat(base)
-  //   //   .catch(() => {
-  //   //     throw new Error(`the start path '${startPath}' does not exist`)
-  //   //   })
-  //   //   .then((stat) => {
-  //   //     if (!stat.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
-  //   return new Promise((resolve, reject) =>
-  //     vfs
-  //       .src(CONTENT_GLOB, { base, cwd: base, removeBOM: false })
-  //       .on('error', reject)
-  //       .pipe(relativizeFiles())
-  //       .pipe(collectFiles(resolve))
-  //   )
-  //   // })
-  // }
-
-  // /**
-  //  * Transforms the path of every file in the stream to a relative posix path.
-  //  *
-  //  * Applies a mapping function to all files in the stream so they end up with a
-  //  * posixified path relative to the file's base instead of the filesystem root.
-  //  * This mapper also filters out any directories (indicated by file.isNull())
-  //  * that got caught up in the glob.
-  //  */
-  // function relativizeFiles () {
-  //   return map((file, enc, next) => {
-  //     if (file.isNull()) {
-  //       next()
-  //     } else {
-  //       next(
-  //         null,
-  //         new File({
-  //           path: posixify ? posixify(file.relative) : file.relative,
-  //           contents: file.contents,
-  //           stat: file.stat,
-  //           src: { abspath: file.path },
-  //         })
-  //       )
-  //     }
-  //   })
-  // }
-
-  // function collectFiles (done) {
-  //   const accum = []
-  //   return map((file, enc, next) => accum.push(file) && next(), () => done(accum)) // prettier-ignore
-  // }
-
+describe.skip('PDF outline', function () {
   const getOutlineRefs = (pdfDoc) => {
     const values = pdfDoc.context.lookup(pdfDoc.catalog.get(PDFName.of('Outlines'))).context.indirectObjects.values()
     const dicts = []
