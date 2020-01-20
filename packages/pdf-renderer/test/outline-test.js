@@ -3,99 +3,92 @@
 
 //command line to generate processed html from test/fixtures project:
 //$ANTORA_DEV test/fixtures/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator \
-//  --ui-bundle-url ../../antora/antora-ui-default/build/ui-pdf-bundle.zip --ui-start-path pdf
+// --ui-bundle-url ../../antora/antora-ui-default/build/ui-pdf-bundle.zip --ui-start-path pdf
+// Then mv test/fixtures/build/site/component packages/pdf-renderer/test/fixtures/
+// Run with outline and metadata additions disabled.
 const fs = require('fs')
 const { PDFDocument, PDFName, PDFDict } = require('pdf-lib')
 const chai = require('chai')
-const ospath = require('path')
+// const ospath = require('path')
 const expect = chai.expect
 const dirtyChai = require('dirty-chai')
 chai.use(dirtyChai)
 require('./helper.js')(chai)
 
-const vfs = require('vinyl-fs')
-const { obj: map } = require('through2')
-const { posix: path } = ospath
-const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
-const File = require('./file')
-const convertToPdf = require('@antora-pdf/pdf-renderer')
-const CONTENT_GLOB = '**/*'
+// const vfs = require('vinyl-fs')
+// const { obj: map } = require('through2')
+// const { posix: path } = ospath
+// const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
+// const File = require('./file')
+// const convertToPdf = require('@antora-pdf/pdf-renderer')
+const { addOutline } = require('../lib/outline.js')
+// const CONTENT_GLOB = '**/*'
 // const asciidoctor = require('@asciidoctor/core')()
 // const converter = require('../lib/converter.js')
 // const templates = require('../lib/document/templates.js')
 // converter.registerTemplateConverter(asciidoctor, templates)
 
-describe('PDF converter', function () {
-  // launching a headless browser (especially on Travis) can take several tens of seconds
-  this.timeout(30000)
+const fixturesHtml = `${__dirname}/fixtures/component/1.0`
+const fixturesPdf = `${fixturesHtml}/_attachments`
 
-  let pdfDocs
+describe('PDF outline', function () {
 
-  before(async () => {
-    const files = await readFilesFromWorktree(__dirname, 'fixtures/site')
-    const catalog = { getFiles: () => files }
-    const pages = catalog.filter((file) => file.relative.endswith('.html')).map((file) => {
-      file.out = { path: file.relative }
-      return file
-    })
-    const pdfPages = await convertToPdf(pages, [catalog])
-    pdfDocs = pdfPages.reduce((accum, page) => {
-      accum[page.relative] = PDFDocument.load(page.contents)
-      return accum
-    }, {})
-    console.log('pdfDocs: ', pdfDocs.entries().map(([a, b]) => a))
-  })
+  // let pdfDocs
 
-  //borrowed from aggregate-content.js
-  function readFilesFromWorktree (worktreePath, startPath) {
-    const base = path.join(worktreePath, startPath)
-    return fs
-      .stat(base)
-      .catch(() => {
-        throw new Error(`the start path '${startPath}' does not exist`)
-      })
-      .then((stat) => {
-        if (!stat.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
-        return new Promise((resolve, reject) =>
-          vfs
-            .src(CONTENT_GLOB, { base, cwd: base, removeBOM: false })
-            .on('error', reject)
-            .pipe(relativizeFiles())
-            .pipe(collectFiles(resolve))
-        )
-      })
-  }
+  // before(async () => {
+  // })
 
-  /**
-   * Transforms the path of every file in the stream to a relative posix path.
-   *
-   * Applies a mapping function to all files in the stream so they end up with a
-   * posixified path relative to the file's base instead of the filesystem root.
-   * This mapper also filters out any directories (indicated by file.isNull())
-   * that got caught up in the glob.
-   */
-  function relativizeFiles () {
-    return map((file, enc, next) => {
-      if (file.isNull()) {
-        next()
-      } else {
-        next(
-          null,
-          new File({
-            path: posixify ? posixify(file.relative) : file.relative,
-            contents: file.contents,
-            stat: file.stat,
-            src: { abspath: file.path },
-          })
-        )
-      }
-    })
-  }
+  // //borrowed from aggregate-content.js
+  // function readFilesFromWorktree (worktreePath, startPath) {
+  //   const base = path.join(worktreePath, startPath)
+  //   console.log('base: ', base)
+  //   // return fs
+  //   //   .stat(base)
+  //   //   .catch(() => {
+  //   //     throw new Error(`the start path '${startPath}' does not exist`)
+  //   //   })
+  //   //   .then((stat) => {
+  //   //     if (!stat.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
+  //   return new Promise((resolve, reject) =>
+  //     vfs
+  //       .src(CONTENT_GLOB, { base, cwd: base, removeBOM: false })
+  //       .on('error', reject)
+  //       .pipe(relativizeFiles())
+  //       .pipe(collectFiles(resolve))
+  //   )
+  //   // })
+  // }
 
-  function collectFiles (done) {
-    const accum = []
-    return map((file, enc, next) => accum.push(file) && next(), () => done(accum)) // prettier-ignore
-  }
+  // /**
+  //  * Transforms the path of every file in the stream to a relative posix path.
+  //  *
+  //  * Applies a mapping function to all files in the stream so they end up with a
+  //  * posixified path relative to the file's base instead of the filesystem root.
+  //  * This mapper also filters out any directories (indicated by file.isNull())
+  //  * that got caught up in the glob.
+  //  */
+  // function relativizeFiles () {
+  //   return map((file, enc, next) => {
+  //     if (file.isNull()) {
+  //       next()
+  //     } else {
+  //       next(
+  //         null,
+  //         new File({
+  //           path: posixify ? posixify(file.relative) : file.relative,
+  //           contents: file.contents,
+  //           stat: file.stat,
+  //           src: { abspath: file.path },
+  //         })
+  //       )
+  //     }
+  //   })
+  // }
+
+  // function collectFiles (done) {
+  //   const accum = []
+  //   return map((file, enc, next) => accum.push(file) && next(), () => done(accum)) // prettier-ignore
+  // }
 
   const getOutlineRefs = (pdfDoc) => {
     const values = pdfDoc.context.lookup(pdfDoc.catalog.get(PDFName.of('Outlines'))).context.indirectObjects.values()
@@ -122,14 +115,19 @@ describe('PDF converter', function () {
   }
 
   const convert = async (inputFile, outputFile, options) => {
-    return pdfDocs[inputFile]
+    const htmlDoc = fs.readFileSync(inputFile)
+    const pdfFile = fs.readFileSync(outputFile).toString()
+    console.log('pdfFile.length', pdfFile.length)
+    console.log('pdf buffer 1 ', Buffer.from(pdfFile))
+    const pdfDoc = await PDFDocument.load(pdfFile)
+    return addOutline(htmlDoc, pdfDoc, options.attributes)
   }
 
   it('should not encode HTML entity in the PDF outline', async () => {
     const options = { attributes: { toc: 'macro' } }
     const pdfDoc = await convert(
-      `${__dirname}/fixtures/sections.adoc`,
-      `${__dirname}/output/sections-toc-absent.pdf`,
+      `${fixturesHtml}/sections.html`,
+      `${fixturesPdf}/sections.pdf`,
       options
     )
     const refs = getOutlineRefs(pdfDoc)
@@ -146,8 +144,8 @@ describe('PDF converter', function () {
   it('should generate a PDF outline even if the TOC is absent from the output', async () => {
     const options = { attributes: { toc: 'macro' } }
     const pdfDoc = await convert(
-      `${__dirname}/fixtures/sections.adoc`,
-      `${__dirname}/output/sections-toc-absent.pdf`,
+      `${fixturesHtml}/sections-toc-macro.html`,
+      `${fixturesPdf}/sections-toc-macro.pdf`,
       options
     )
     const refs = getOutlineRefs(pdfDoc)
@@ -156,7 +154,7 @@ describe('PDF converter', function () {
   })
 
   it('should generate a PDF outline even if the TOC is not enabled', async () => {
-    const pdfDoc = await convert(`${__dirname}/fixtures/sections.adoc`, `${__dirname}/output/sections-toc-disabled.pdf`)
+    const pdfDoc = await convert(`${fixturesHtml}/sections.html`, `${fixturesPdf}/sections.pdf`)
     const refs = getOutlineRefs(pdfDoc)
     expect(refs.length).to.equal(9)
     expect(refs[0].get(PDFName.of('Dest')).encodedName).to.equal('/_section_1')
@@ -165,8 +163,8 @@ describe('PDF converter', function () {
   it('should honor toclevels 1 when generating a PDF outline', async () => {
     const options = { attributes: { toclevels: 1 } }
     const pdfDoc = await convert(
-      `${__dirname}/fixtures/sections.adoc`,
-      `${__dirname}/output/sections-toclevels-1.pdf`,
+      `${fixturesHtml}/sections-toc-l1.html`,
+      `${fixturesPdf}/sections-toc-l1.pdf`,
       options
     )
     const refs = getOutlineRefs(pdfDoc)
@@ -177,8 +175,8 @@ describe('PDF converter', function () {
   it('should honor toclevels 3 when generating a PDF outline', async () => {
     const options = { attributes: { toclevels: 3 } }
     const pdfDoc = await convert(
-      `${__dirname}/fixtures/sections.adoc`,
-      `${__dirname}/output/sections-toclevels-1.pdf`,
+      `${fixturesHtml}/sections-toc-l3.html`,
+      `${fixturesPdf}/sections-toc-l3.pdf`,
       options
     )
     const refs = getOutlineRefs(pdfDoc)
@@ -194,7 +192,7 @@ describe('PDF converter', function () {
   //     stylesheet: `${__dirname}/../css/asciidoctor.css;${__dirname}/../css/document.css;
   // ${__dirname}/../css/features/book.css;${__dirname}/fixtures/black-title-page.css`,
   //   }
-  //   await converter.convert(asciidoctor, `${__dirname}/fixtures/title-page.adoc`, opts, false)
+  //   await converter.convert(asciidoctor, `${__dirname}/fixtures/title-page.html`, opts, false)
   //   expect(outputFile).to.be.visuallyIdentical('title-page-background-color.pdf')
   // })
 })

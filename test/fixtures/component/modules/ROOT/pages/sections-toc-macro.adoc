@@ -1,0 +1,50 @@
+= Title
+:toc: macro
+
+<<<
+
+== Section 1
+
+<<<
+
+=== Section 1.1
+
+<<<
+
+==== Section 1.1.1
+
+<<<
+
+===== Section 1.1.1.1
+
+<<<
+
+== Section 2: Black & White
+
+<<<
+
+=== Section 2.1
+
+<<<
+
+=== Section 2.2
+
+<<<
+
+== _Section 3_: "`Typographic quotes`"
+
+<<<
+
+=== Section 3.1
+
+<<<
+
+==== Section 3.1.1
+
+<<<
+
+== Section 4: Asterisk hex &#x2a; and decimal &#42;
+
+<<<
+
+=== Section 4.1
