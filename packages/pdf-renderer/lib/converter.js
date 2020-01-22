@@ -47,11 +47,14 @@ async function convert (file, browser) {
       .on('error', (err) => {
         console.error('Page crashed: ' + err.toString())
       })
-    await page.goto(url, { waitUntil: 'networkidle0' })
+    await page.goto(url, { timeout: 0, waitUntil: 'networkidle0' })
+    console.log(`page ${url} loaded`)
     const watchDog = page.waitForFunction(
-      'window.AsciidoctorPDF === undefined || window.AsciidoctorPDF.status === undefined || window.AsciidoctorPDF.status === "ready"'
+      'window.AsciidoctorPDF === undefined || window.AsciidoctorPDF.status === undefined || window.AsciidoctorPDF.status === "ready"',
+      { timeout: 0 }
     )
     await watchDog
+    console.log(`page ${url} ready`)
     const pdfOptions = {
       printBackground: true,
       preferCSSPageSize: true,
@@ -87,6 +90,7 @@ async function convert (file, browser) {
     pdfFile.src.mediaType = 'application/pdf'
     pdfFile.src.family = 'attachment'
     pdfFile.contents = Buffer.from(pdf)
+    console.log(`page ${url} pdf render complete`)
     return pdfFile
   } finally {
     await page.close()
