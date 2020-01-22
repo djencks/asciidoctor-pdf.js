@@ -99,16 +99,24 @@ function buildPdfObjectsForOutline (layer, context) {
 
 function generateWarningsAboutMissingDestinations (layer, pdfDoc) {
   const dests = pdfDoc.context.lookup(pdfDoc.catalog.get(PDFName.of('Dests')))
-  // console.log('dests', dests)
   // Dests can be undefined if the PDF wasn't successfully generated (for instance if Paged.js threw an exception)
   if (dests) {
     const validDestinationTargets = dests.entries().map(([key, _]) => key.value())
+    console.log('validDestinationTargets: ', validDestinationTargets)
+    checkDestinations(layer, validDestinationTargets)
+  }
+}
+
+function checkDestinations (layer, validDestinationTargets) {
+  if (layer.length) {
+    console.log('layer: ', layer)
     for (const item of layer) {
       if (item.destination.length > 0 && !validDestinationTargets.includes('/' + item.destination)) {
-        console.warn(`Unable to find destination ${item.destination} while generating PDF outline! \
-This likely happened because an anchor link contained an umlaut (https://bugs.chromium.org/p/chromium/issues/detail?id=985254).`)
+        console.warn(`Unable to find destination ${item.destination} while generating PDF outline. 
+Most likely some part of your content didn't render.  
+Try adding page breaks or look for an umlaut: (https://bugs.chromium.org/p/chromium/issues/detail?id=985254).`)
       }
-      generateWarningsAboutMissingDestinations(item.children, pdfDoc)
+      checkDestinations(item.children, validDestinationTargets)
     }
   }
 }
