@@ -135,14 +135,20 @@ const isSvgIconEnabled = (node) =>
 
 const titlePage = (node) => {
   if (node.getDocumentTitle()) {
+    const titleSeparator = (node.getAttribute('title-separator') || ':') + ' '
+    const titleBits = node.getDocumentTitle().split(titleSeparator)
+    const subtitleElement = (titleBits.length >= 2) ? `  <h2>${titleBits.slice(1).join(titleSeparator)}</h2>
+` : ''
     if (hasTitlePage(node)) {
       return `<div id="cover" class="title-page">
-  <h1>${node.getDocumentTitle()}</h1>
+  <h1>${titleBits[0]}</h1>
+${subtitleElement}
   <h2>${node.getDocument().getAuthor()}</h2>
 </div>`
     }
     return `<div class="title-document">
-  <h1>${node.getDocumentTitle()}</h1>
+  <h1>${titleBits[0]}</h1>
+  ${subtitleElement}
 </div>`
   }
   return ''
