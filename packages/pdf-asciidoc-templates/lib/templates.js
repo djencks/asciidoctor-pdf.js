@@ -273,7 +273,7 @@ ${titleElement}${node.getContent()}
           return icon.html
         }
       } else {
-        return baseConverter.$convert(baseConverter, node, transform, opts)
+        return baseConverter.$convert(node, transform, opts)
       }
     },
     colist: (node, transform, opts) => {
