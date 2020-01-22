@@ -102,23 +102,30 @@ function generateWarningsAboutMissingDestinations (layer, pdfDoc) {
   // Dests can be undefined if the PDF wasn't successfully generated (for instance if Paged.js threw an exception)
   if (dests) {
     const validDestinationTargets = dests.entries().map(([key, _]) => key.value())
-    console.log('validDestinationTargets: ', validDestinationTargets)
-    checkDestinations(layer, validDestinationTargets)
+    if (checkDestinations(layer, validDestinationTargets)) {
+      console.log(`Unable to find destinations listed above while generating PDF outline.
+Most likely some part of your content didn't render.  
+Try adding page breaks or look for an umlaut: (https://bugs.chromium.org/p/chromium/issues/detail?id=985254).`)
+      console.log('validDestinationTargets: ', validDestinationTargets)
+    }
   }
 }
 
 function checkDestinations (layer, validDestinationTargets) {
   if (layer.length) {
-    console.log('layer: ', layer)
-    for (const item of layer) {
-      if (item.destination.length > 0 && !validDestinationTargets.includes('/' + item.destination)) {
-        console.warn(`Unable to find destination ${item.destination} while generating PDF outline. 
-Most likely some part of your content didn't render.  
-Try adding page breaks or look for an umlaut: (https://bugs.chromium.org/p/chromium/issues/detail?id=985254).`)
+    const missing = layer.map((item) => item.destination)
+      .filter((dest) => (dest.length > 0 && !validDestinationTargets.includes(`/${dest}`)))
+    const print = layer.reduce((accum, item) =>
+      checkDestinations(item.children, validDestinationTargets) || accum, false) || missing.length
+    if (print) {
+      if (missing.length) {
+        console.log('missing destinations: ', missing)
       }
-      checkDestinations(item.children, validDestinationTargets)
+      console.log('layer: ', layer)
     }
+    return print
   }
+  return false
 }
 
 async function addOutline (pdfDoc, htmldoc, attributes) {
