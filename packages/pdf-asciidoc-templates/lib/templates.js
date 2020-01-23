@@ -159,10 +159,10 @@ ${subtitleElement}
  * and we won't be able to generate a PDF outline.
  */
 const outline = (baseConverter, node, transform, opts) => {
-  if (baseConverter) {
-    return `<div style="display: none;">${baseConverter.$convert_outline(node)}</div>`
+  if (node.hasSections() && node.hasAttribute('toc')) {
+    return ''
   }
-  return ''
+  return `<div style="display: none;">${baseConverter.$convert_outline(node)}</div>`
 }
 
 const tocHeader = (baseConverter, node, transform, opts) => {
