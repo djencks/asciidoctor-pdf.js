@@ -10,7 +10,9 @@ module.exports.register = function (registry) {
         doc.isAttribute('toc') &&
         doc.isAttribute('toc-placement', 'auto')
       ) {
-        classes = [doc.getDoctype(), doc.getAttribute('toc-class'), `toc-${doc.getAttribute('toc-position', 'header')}`]
+        classes = [doc.getDoctype()]
+        //Why was this appropriate for asciidoctor-pdf.js??
+        //, doc.getAttribute('toc-class'), `toc-${doc.getAttribute('toc-position', 'header')}`]
       } else {
         classes = [doc.getDoctype()]
       }
@@ -34,13 +36,13 @@ module.exports.register = function (registry) {
       doc.setAttribute('page-pagedjs-lang-attr', langAttr())
 
       if (doc.getDoctype() === 'book' || doc.hasAttribute('title-page')) {
-        doc.setAttribute('page-pagedjs-title-page', '')
+        doc.setAttribute('page-pagedjs-title-page', 't')
       }
       if (doc.getDoctype() === 'book') {
-        doc.setAttribute('page-pagedjs-book', '')
+        doc.setAttribute('page-pagedjs-book', 't')
       }
       if (doc.isAttribute('icontype', 'svg') || doc.isAttribute('icons', 'font')) {
-        doc.setAttribute('page-pagedjs-svg-icons', '')
+        doc.setAttribute('page-pagedjs-svg-icons', 't')
       }
 
       return doc

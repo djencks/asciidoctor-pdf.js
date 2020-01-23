@@ -93,8 +93,8 @@ Guillaume Grossetie
         contentCatalog,
         Object.assign({ doctype: 'book' }, asciidocConfig)
       )
-      expect(doc.getAttribute('page-pagedjs-title-page')).to.equal('')
-      expect(doc.getAttribute('page-pagedjs-book')).to.equal('')
+      expect(doc.getAttribute('page-pagedjs-title-page')).to.equal('t')
+      expect(doc.getAttribute('page-pagedjs-book')).to.equal('t')
       const $ = cheerio.load(doc.convert())
       expect($('.title-page > h1').text()).to.equal('Title')
     })
@@ -122,7 +122,7 @@ Guillaume Grossetie
 :title-page:
 
 == Section`)
-      expect(doc.getAttribute('page-pagedjs-title-page')).to.equal('')
+      expect(doc.getAttribute('page-pagedjs-title-page')).to.equal('t')
     })
 
     it('should not include a document title if the document title is empty', () => {
@@ -220,7 +220,7 @@ It's possible to use emojis as admonition.`)
 
 icon:address-book[]`
         )
-        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('')
+        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('t')
         const $ = cheerio.load(doc.convert())
         expect($('svg[data-prefix="fa"][data-icon="address-book"]').html()).to.equal(
           '<path fill="currentColor" d="M436 160c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h320c26.5 0 48-21.5 48-48v-48h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20zm-228-32c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64zm112 236.8c0 10.6-10 19.2-22.4 19.2H118.4C106 384 96 375.4 96 364.8v-19.2c0-31.8 30.1-57.6 67.2-57.6h5c12.3 5.1 25.7 8 39.8 8s27.6-2.9 39.8-8h5c37.1 0 67.2 25.8 67.2 57.6v19.2z"></path>'
@@ -230,7 +230,7 @@ icon:address-book[]`
         const doc = loadAsciidoc(`:icontype: svg
 
 icon:address-book[]`)
-        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('')
+        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('t')
         const $ = cheerio.load(doc.convert())
         expect($('svg[data-prefix="fa"][data-icon="address-book"]').html()).to.equal(
           '<path fill="currentColor" d="M436 160c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h320c26.5 0 48-21.5 48-48v-48h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20zm-228-32c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64zm112 236.8c0 10.6-10 19.2-22.4 19.2H118.4C106 384 96 375.4 96 364.8v-19.2c0-31.8 30.1-57.6 67.2-57.6h5c12.3 5.1 25.7 8 39.8 8s27.6-2.9 39.8-8h5c37.1 0 67.2 25.8 67.2 57.6v19.2z"></path>'
@@ -240,7 +240,7 @@ icon:address-book[]`)
         const doc = loadAsciidoc(`:icontype: svg
 
 icon:address-book[set=far]`)
-        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('')
+        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('t')
         const $ = cheerio.load(doc.convert())
         expect($('svg[data-prefix="far"][data-icon="address-book"]').html()).to.equal(
           '<path fill="currentColor" d="M436 160c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h320c26.5 0 48-21.5 48-48v-48h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-20v-64h20zm-68 304H48V48h320v416zM208 256c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm-89.6 128h179.2c12.4 0 22.4-8.6 22.4-19.2v-19.2c0-31.8-30.1-57.6-67.2-57.6-10.8 0-18.7 8-44.8 8-26.9 0-33.4-8-44.8-8-37.1 0-67.2 25.8-67.2 57.6v19.2c0 10.6 10 19.2 22.4 19.2z"></path>'
@@ -250,7 +250,7 @@ icon:address-book[set=far]`)
         const doc = loadAsciidoc(`:icontype: svg
 
 icon:chrome@fab[]`)
-        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('')
+        expect(doc.getAttribute('page-pagedjs-svg-icons')).to.equal('t')
         const $ = cheerio.load(doc.convert())
         expect($('svg[data-prefix="fab"][data-icon="chrome"]').html()).to.equal(
           '<path fill="currentColor" d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path>'
