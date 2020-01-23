@@ -9,3 +9,4 @@
  */
 module.exports = require('./templates')
 module.exports.bodyAttributesProcessor = require('./body-attributes-processor')
+module.exports.includeProcessor = require('./include/include-processor')

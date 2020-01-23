@@ -11,7 +11,7 @@ const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loade
 const classifyContent = require('@antora-pdf/pdf-content-classifier')
 const convertToPdf = require('@antora-pdf/pdf-renderer')
 const pdfTemplate = require('@antora-pdf/pdf-asciidoc-templates')
-const { bodyAttributesProcessor } = require('@antora-pdf/pdf-asciidoc-templates')
+const { bodyAttributesProcessor, includeProcessor } = require('@antora-pdf/pdf-asciidoc-templates')
 
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)
@@ -24,6 +24,7 @@ async function generateSite (args, env) {
   asciidocConfig.extensions.push(bodyAttributesProcessor)
   if (!asciidocConfig.converters) asciidocConfig.converters = []
   asciidocConfig.converters.push(pdfTemplate)
+  asciidocConfig.includeProcessor = includeProcessor
 
   const pages = convertDocuments(contentCatalog, asciidocConfig)
   const navigationCatalog = buildNavigation(contentCatalog, asciidocConfig)
