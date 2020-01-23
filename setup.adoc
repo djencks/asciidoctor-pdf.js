@@ -113,3 +113,19 @@ An overview of how the paged media spec sets things up is here: link:https://www
 For Antora-pdf that is done in the UI bundle, in the `pdf/css/document.css` and `pdf/css/title-document-numbering.css` files.
 
 There are some additional .css files referenced when the document calls for them.
+
+== Known problems
+
+* Often it's needed to insert an explicit page break `<<<` after the `:toc:` or content is left out.
+Even so, there are sometimes problems with the pdf index.
+* Images that are too large can make paged.js enter an infinite loop, repeating the section (?) the image is in over and over.
+Explicitly setting the width sufficiently narrow fixes this, e.g. `image::my.png[width=90%]`.
+If the configured width is too wide, the image may not appear or paged.js may loop.
+I don't know how to predict an appropriate width percent: 90% has worked, some images work at 98%, others not at 97%.
+`scaledwidth=80%` did not work for me.
+* Background images on the title page don't work (? The SUSE manager pdfs have this, but I don't know how they do it).
+* TOC page numbers are sometimes 0.
+I suspect this has to do with pagination problems.
+* TOC links work, but links in the document don't.
+This is because the links are set up in the original pages to other different original pages.
+When everything is glommed into one document, the links are still to the other pages, not the section of the big document.
