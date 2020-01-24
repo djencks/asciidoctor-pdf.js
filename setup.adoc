@@ -126,6 +126,5 @@ I don't know how to predict an appropriate width percent: 90% has worked, some i
 * Background images on the title page don't work (? The SUSE manager pdfs have this, but I don't know how they do it).
 * TOC page numbers are sometimes 0.
 I suspect this has to do with pagination problems.
-* TOC links work, but links in the document don't.
-This is because the links are set up in the original pages to other different original pages.
-When everything is glommed into one document, the links are still to the other pages, not the section of the big document.
+* Intradocument links now work (at least for uyuni docs), but links to other pages in the original site don't; they point to the localhost:8081 server.
+I don't know what they should point to....
