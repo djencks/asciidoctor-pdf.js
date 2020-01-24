@@ -61,10 +61,12 @@ const IncludeProcessor = (() => {
         // console.log('resolvedFile.context', resolvedFile.context)
         const match = includeContents.match(PRIMARY_ID_RX)
         const anchor = match ? match[1] : `xref-${includeCount++}`//-${resolvedFile.context.stem}`
-        includeMap[`${resolvedFile.context.module}:${resolvedFile.context.relative}`] = anchor
+        const src = resolvedFile.context
+        includeMap[`${src.version}@${src.component}:${src.module}:${src.relative}`] = anchor
         if (!match) {
           includeContents = `[[${anchor}]]\n${includeContents}`
         }
+        // console.log('includeMap: ', includeMap)
       }
       Opal.hash_put(attrs, 'partial-option', '')
       reader.pushInclude(includeContents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)

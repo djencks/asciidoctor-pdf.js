@@ -49,7 +49,9 @@ function convertPageRef (refSpec, content, currentPage, contentCatalog, relativi
   }
   const includeMap = currentPage.includeMap
   // console.log(`refSpec: ${refSpec}, pageIdSpec: ${pageIdSpec}, fragment: ${fragment}`)
-  const mappedTarget = includeMap[`${pageIdSpec}.adoc`]
+  // console.log('targetPage.src', targetPage.src)
+  const src = targetPage.src
+  const mappedTarget = includeMap[`${src.version}@${src.component}:${src.module}:${src.relative}`]
   target = fragment ? hash : mappedTarget ? `#${mappedTarget}` : target
   return { content: content || fragment || mappedTarget || target, target, internal }
 }
