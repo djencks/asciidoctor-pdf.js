@@ -1,6 +1,5 @@
 'use strict'
 
-const computeRelativeUrlPath = require('../util/compute-relative-url-path')
 const splitOnce = require('../util/split-once')
 
 /**
@@ -24,7 +23,7 @@ const splitOnce = require('../util/split-once')
  * content and target to make an HTML link, and hints to indicate if the reference is either
  * internal or unresolved.
  */
-function convertPageRef (refSpec, content, currentPage, contentCatalog, relativize = true) {
+function convertPageRef (refSpec, content, currentPage, contentCatalog, siteUrl) {
   let targetPage
   const [pageIdSpec, fragment] = splitOnce(refSpec, '#')
   const hash = fragment ? '#' + fragment : ''
@@ -39,21 +38,14 @@ function convertPageRef (refSpec, content, currentPage, contentCatalog, relativi
     console.log(`Invalid page id ${refSpec}`)
     return { content, target: `#${refSpec}`, unresolved: true }
   }
-  let target
-  let internal
-  if (relativize) {
-    target = computeRelativeUrlPath(currentPage.pub.url, targetPage.pub.url, hash)
-    if (target === hash) internal = true
-  } else {
-    target = targetPage.pub.url + hash
-  }
+  let target = targetPage.pub.url + hash
   const includeMap = currentPage.includeMap
   // console.log(`refSpec: ${refSpec}, pageIdSpec: ${pageIdSpec}, fragment: ${fragment}`)
   // console.log('targetPage.src', targetPage.src)
   const src = targetPage.src
   const mappedTarget = includeMap[`${src.version}@${src.component}:${src.module}:${src.relative}`]
-  target = fragment ? hash : mappedTarget ? `#${mappedTarget}` : target
-  return { content: content || fragment || mappedTarget || target, target, internal }
+  target = mappedTarget ? fragment ? hash : `#${mappedTarget}` : `${siteUrl}${target}`
+  return { content: content || fragment || mappedTarget || target, target, mappedTarget }
 }
 
 module.exports = convertPageRef

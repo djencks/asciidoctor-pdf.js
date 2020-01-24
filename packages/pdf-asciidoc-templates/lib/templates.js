@@ -354,9 +354,10 @@ ${node.getContent()}
       if (node.getType() === 'xref') {
         if (node.getAttribute('path')) {
           const attrs = node.getAttributes()
+          // console.log('attrs', node.getDocument().getAttributes())
           if (attrs.fragment === Opal.nil) delete attrs.fragment
           const { content, target, internal, unresolved } =
-            convertPageRef(attrs.refid, node.getText(), file, contentCatalog, config.relativizePageRefs !== false)
+            convertPageRef(attrs.refid, node.getText(), file, contentCatalog, node.getDocument().getAttribute('site-url'))
           let options
           if (internal) {
             // QUESTION should we propagate the role in this case?
