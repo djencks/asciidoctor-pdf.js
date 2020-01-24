@@ -2,7 +2,6 @@ module.exports.register = function (registry, { file, contentCatalog, config }) 
   registry.treeProcessor(function () {
     var self = this
     self.process(function (doc) {
-      printBlocks(doc)
       const bodyAttrs = doc.getId() ? [`id="${doc.getId()}"`] : []
       let classes
       if (
@@ -48,13 +47,5 @@ module.exports.register = function (registry, { file, contentCatalog, config }) 
 
       return doc
     })
-
-    function printBlocks(block, level = 1) {
-      console.log(`Block at level ${level}`)
-      // console.log('block...', block)
-      // console.log('block reader', block.reader)
-      console.log('block catalog', block.catalog.includes)
-      // block.getBlocks().forEach(sub => printBlocks(sub, level + 1))
-    }
   })
 }

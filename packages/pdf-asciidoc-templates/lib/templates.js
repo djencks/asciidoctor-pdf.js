@@ -1,5 +1,6 @@
 'use strict'
 
+const Opal = global.Opal
 // const fs = require('fs')
 // const ospath = require('path')
 const stemContent = require('./stem')
@@ -32,6 +33,7 @@ const faTipIcon = faLayer((push) => {
   push(faIcon(faCircle))
   push(faIcon(faLightbulb, { transform: { size: 10 }, classes: 'fa-inverse' }))
 })
+const convertPageRef = require('./xref/convert-page-ref')
 
 // const resolveStylesheet = (requirePath, cwd = process.cwd()) => {
 //   // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
@@ -348,5 +350,30 @@ ${node.getContent()}
 </div>${toc}
 </div>`
     },
+    inline_anchor: (node, transform, opts) => {
+      if (node.getType() === 'xref') {
+        if (node.getAttribute('path')) {
+          const attrs = node.getAttributes()
+          if (attrs.fragment === Opal.nil) delete attrs.fragment
+          const { content, target, internal, unresolved } =
+            convertPageRef(attrs.refid, node.getText(), file, contentCatalog, config.relativizePageRefs !== false)
+          let options
+          if (internal) {
+            // QUESTION should we propagate the role in this case?
+            options = Opal.hash2(['type', 'target'], { type: 'link', target })
+          } else {
+            attrs.role = `page${unresolved ? ' unresolved' : ''}${attrs.role ? ' ' + attrs.role : ''}`
+            options = Opal.hash2(['type', 'target', 'attrs'], {
+              type: 'link',
+              target,
+              attributes: Opal.hash2(Object.keys(attrs), attrs),
+            })
+          }
+          node = Opal.module(null, 'Asciidoctor').Inline.$new(node.getParent(), 'anchor', content, options)
+        }
+      }
+      return baseConverter.convert(node, transform, opts)
+    },
+
   }
 }

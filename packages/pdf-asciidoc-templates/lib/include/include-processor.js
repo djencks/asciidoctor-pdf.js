@@ -17,13 +17,17 @@ const IncludeProcessor = (() => {
   const superclass = Opal.module(null, 'Asciidoctor').Extensions.IncludeProcessor
   const scope = Opal.klass(Opal.module(null, 'Antora', $Antora), superclass, 'IncludeProcessor', function () {})
 
-  var includeCount = 0
-  const includeMap = {}
+  var includeCount
+  var includeMap
 
   Opal.defn(scope, '$initialize', function initialize (callback, file) {
     Opal.send(this, Opal.find_super_dispatcher(this, 'initialize', initialize))
     this[$callback] = callback
-    file.includeMap = includeMap
+    includeCount = 0
+    includeMap = {}
+    if (file) {
+      file.includeMap = includeMap
+    }
   })
 
   Opal.defn(scope, '$process', function (doc, reader, target, attrs) {
@@ -54,9 +58,10 @@ const IncludeProcessor = (() => {
         startLineNum = 1
       }
       if (resolvedFile.context.family === 'page') {
+        // console.log('resolvedFile.context', resolvedFile.context)
         const match = includeContents.match(PRIMARY_ID_RX)
         const anchor = match ? match[1] : `xref-${includeCount++}`//-${resolvedFile.context.stem}`
-        includeMap[target] = anchor
+        includeMap[`${resolvedFile.context.module}:${resolvedFile.context.relative}`] = anchor
         if (!match) {
           includeContents = `[[${anchor}]]\n${includeContents}`
         }
@@ -248,7 +253,3 @@ module.exports.register = function (registry, { file, contentCatalog, config }) 
   registry.includeProcessor(IncludeProcessor.$new((doc, target, cursor) =>
     resolveIncludeFile(target, file, cursor, contentCatalog), file))
 }
-
-// module.exports = includeProcessor
-
-// module.exports = IncludeProcessor
