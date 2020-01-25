@@ -126,5 +126,8 @@ I don't know how to predict an appropriate width percent: 90% has worked, some i
 * Background images on the title page don't work (? The SUSE manager pdfs have this, but I don't know how they do it).
 * TOC page numbers are sometimes 0.
 I suspect this has to do with pagination problems.
-* Intradocument links now work (at least for uyuni docs), but links to other pages in the original site don't; they point to the localhost:8081 server.
-I don't know what they should point to....
+* Intradocument links now work (at least for uyuni docs).
+* Outside-doc links generally get the site-url based url.
+* Including an `a` type in a column specifier generally makes the table overflow the page width and breaks layout.
+** With a table formerly using `a`, paragraphs (from blank lines) make paged.js go into an infinite loop, although not from overflow.
+* Image:: refs must include the module and possibly component as they are likely to be pulled into a different module by inclusion.
