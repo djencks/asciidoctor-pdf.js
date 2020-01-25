@@ -52,6 +52,10 @@ async function convert (file, browser) {
       .on('error', (err) => {
         console.error(`Page ${url}crashed: ${err.toString()}`)
       })
+      .on('console', (msg) => {
+        console.log(`console log for ${url}: ${msg._type}: ${msg._text}`)
+        // msg._args.forEach((arg) => console.log(arg))
+      })
     await page.goto(url, { timeout: 600000, waitUntil: 'networkidle0' })
     console.log(`page ${url} loaded`)
     const watchDog = page.waitForFunction(
