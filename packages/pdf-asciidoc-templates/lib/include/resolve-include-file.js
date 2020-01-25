@@ -23,9 +23,12 @@ function resolveIncludeFile (target, page, cursor, catalog) {
   let resolved
   let family
   let relative
+  // console.log(`trying to resolve include ${target} from `, selectResourceId(ctx))
   if (RESOURCE_ID_DETECTOR_RX.test(target)) {
+    // console.log('resource id detected')
     // NOTE support legacy {partialsdir} and {examplesdir} prefixes (same as resource ID w/ only family and relative)
     if (target.startsWith(PARTIALS_DIR_TOKEN) || target.startsWith(EXAMPLES_DIR_TOKEN)) {
+      // console.log('obsolete syntax')
       ;[family, relative] = splitOnce(target, '$')
       if (relative.charAt() === '/') relative = relative.substr(1)
       resolved = catalog.getById({
@@ -35,11 +38,13 @@ function resolveIncludeFile (target, page, cursor, catalog) {
         family,
         relative,
       })
-      // NOTE require family segment for now
-    } else if (~target.indexOf('$')) {
+      // NOTE require family segment for now ???? no thanks
+    } else {
+      // console.log('resolving directly')
       resolved = catalog.resolveResource(target, selectResourceId(ctx))
     }
   } else {
+    // console.log('get by path')
     resolved = catalog.getByPath({
       component: ctx.component,
       version: ctx.version,
@@ -48,6 +53,7 @@ function resolveIncludeFile (target, page, cursor, catalog) {
     })
   }
   if (resolved) {
+    // console.log('resolved')
     const resolvedSrc = resolved.src
     return {
       context: resolvedSrc,

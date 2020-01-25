@@ -43,7 +43,8 @@ const IncludeProcessor = (() => {
       return
     }
     const resolvedFile = this[$callback](doc, target, reader.$cursor_at_prev_line())
-    // console.log(`pdf include processor; target: ${target}: resolves to: `, resolvedFile.context)
+    // console.log(`pdf include processor; target: ${target}: resolves to: `,
+    //   resolvedFile ? resolvedFile.context : 'unresolved')
     if (resolvedFile) {
       let includeContents
       let linenums
