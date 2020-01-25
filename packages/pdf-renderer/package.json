@@ -30,6 +30,7 @@
     "cheerio": "^1.0.0-rc.3",
     "html-entities": "^1.2.1",
     "pdf-lib": "^1.2.1",
-    "puppeteer": "2.0.0"
+    "puppeteer": "2.0.0",
+    "p-limit": "^2.2.2"
   }
 }

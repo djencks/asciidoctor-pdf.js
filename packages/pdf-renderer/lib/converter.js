@@ -2,6 +2,7 @@
 
 const { PDFDocument } = require('pdf-lib')
 const puppeteer = require('puppeteer')
+const pLimit = require('p-limit')
 const { addOutline } = require('./outline.js')
 const { addMetadata } = require('./metadata')
 const server = require('./server')
@@ -10,7 +11,8 @@ async function convertToPdf (pages, catalogs) {
   const { browser, server } = await setup(catalogs)
   let result
   try {
-    result = await Promise.all(pages.map((file) => convert(file, browser)))
+    const limit = pLimit(10)
+    result = await Promise.all(pages.map((file) => limit(() => convert(file, browser))))
   } finally {
     //If you comment out the next two lines, Antora will "keep running"
     //and you can see the html version of pages by pointing to localhost:8081/...
@@ -34,24 +36,27 @@ async function setup (catalogs) {
   return { browser, server: s }
 }
 
+const inProcess = []
+
 async function convert (file, browser) {
   const url = `http://localhost:8081/${file.out.path}`
+  inProcess.push(url)
   const attributes = file.asciidoc.attributes
   const htmldoc = file.contents.toString()
   const page = await browser.newPage()
   try {
     page
       .on('pageerror', (err) => {
-        console.error('> An uncaught exception happened within the HTML page: ' + err.toString())
+        console.error(`> An uncaught exception happened within the HTML page ${url}: ${err.toString()}`)
       })
       .on('error', (err) => {
-        console.error('Page crashed: ' + err.toString())
+        console.error(`Page ${url}crashed: ${err.toString()}`)
       })
-    await page.goto(url, { timeout: 0, waitUntil: 'networkidle0' })
+    await page.goto(url, { timeout: 600000, waitUntil: 'networkidle0' })
     console.log(`page ${url} loaded`)
     const watchDog = page.waitForFunction(
       'window.AsciidoctorPDF === undefined || window.AsciidoctorPDF.status === undefined || window.AsciidoctorPDF.status === "ready"',
-      { timeout: 0 }
+      { timeout: 600000 }
     )
     await watchDog
     console.log(`page ${url} ready`)
@@ -92,7 +97,11 @@ async function convert (file, browser) {
     pdfFile.contents = Buffer.from(pdf)
     console.log(`page ${url} pdf render complete`)
     return pdfFile
+  } catch (err) {
+    console.log(`rendering ${url} failed `, err)
+    console.log('in process: ', inProcess)
   } finally {
+    inProcess.splice(inProcess.indexOf(url), 1)
     await page.close()
   }
 }

@@ -31,7 +31,7 @@ async function generateSite (args, env) {
   const composePage = createPageComposer(playbook, contentCatalog, uiCatalog, env)
   pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
   const pdfPages = await convertToPdf(pages, [contentCatalog, uiCatalog])
-  pdfPages.map((pdf) => contentCatalog.addFile(pdf))
+  pdfPages.filter((pdf) => pdf).map((pdf) => contentCatalog.addFile(pdf))
   return publishSite(playbook, [contentCatalog, uiCatalog])
 }
 
