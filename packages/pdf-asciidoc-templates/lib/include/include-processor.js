@@ -42,6 +42,7 @@ const IncludeProcessor = (() => {
       }
       return
     }
+    console.log(`include ${target} at reader.maxdepth ${reader.maxdepth}`)
     const resolvedFile = this[$callback](doc, target, reader.$cursor_at_prev_line())
     // console.log(`pdf include processor; target: ${target}: resolves to: `,
     //   resolvedFile ? resolvedFile.context : 'unresolved')
@@ -58,14 +59,19 @@ const IncludeProcessor = (() => {
         includeContents = resolvedFile.contents
         startLineNum = 1
       }
-      if (resolvedFile.context.family === 'page') {
-        // console.log('resolvedFile.context', resolvedFile.context)
-        const match = includeContents.match(PRIMARY_ID_RX)
-        const anchor = match ? match[1] : `xref-${includeCount++}`//-${resolvedFile.context.stem}`
-        const src = resolvedFile.context
-        includeMap[`${src.version}@${src.component}:${src.module}:${src.relative}`] = anchor
-        if (!match) {
-          includeContents = `[[${anchor}]]\n${includeContents}`
+      if (resolvedFile.context.family === 'page' || resolvedFile.context.family === 'partial') {
+        if (includeContents && includeContents.match) {
+          // console.log('resolvedFile.context', resolvedFile.context)
+          const match = includeContents.match(PRIMARY_ID_RX)
+          const anchor = match ? match[1] : `xref-${includeCount++}`//-${resolvedFile.context.stem}`
+          const src = resolvedFile.context
+          includeMap[`${src.version}@${src.component}:${src.module}:${src.relative}`] = anchor
+          if (!match) {
+            includeContents = `[[${anchor}]]\n${includeContents}`
+          }
+        } else {
+          log('error', `include target has no content or not a string: ${target}`, reader)
+          reader.$unshift(`Include directive with no content in ${reader.$cursor_at_prev_line().file} - include::${target}[]`)
         }
         // console.log('includeMap: ', includeMap)
       }
