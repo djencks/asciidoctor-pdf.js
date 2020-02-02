@@ -63,11 +63,13 @@ const IncludeProcessor = (() => {
         if (includeContents && includeContents.match) {
           // console.log('resolvedFile.context', resolvedFile.context)
           const match = includeContents.match(PRIMARY_ID_RX)
-          const anchor = match ? match[1] : `xref-${includeCount++}`//-${resolvedFile.context.stem}`
-          const src = resolvedFile.context
-          includeMap[`${src.version}@${src.component}:${src.module}:${src.relative}`] = anchor
-          if (!match) {
-            includeContents = `[[${anchor}]]\n${includeContents}`
+          if (match) {
+            const anchor = match ? match[1] : `xref-${includeCount++}`//-${resolvedFile.context.stem}`
+            const src = resolvedFile.context
+            includeMap[`${src.version}@${src.component}:${src.module}:${src.relative}`] = anchor
+            if (!match) {
+              includeContents = `[[${anchor}]]\n${includeContents}`
+            }
           }
         } else {
           log('error', `include target has no content or not a string: ${target}`, reader)
