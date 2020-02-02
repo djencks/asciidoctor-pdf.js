@@ -103,6 +103,10 @@ By commenting out a couple lines in converter.js you can see the same thing Chro
 cli tests? This is awkward until there is an easier ui bundle generator.
 
 It's presumably possible to automatically convert nav.adoc files to "`including files`", but I'd like to see some real world experience with manual conversions before trying to implement this.
+ownCloud has a nice script that works for their setup.
+It wouldn't work directly for more complex setups such as Isis.
+
+For generating more standalone test documents for analyzing problems, perhaps an alternate UI could include the css and scripts rather than reference them.
 
 == Paged media/PDF configuration
 
@@ -131,3 +135,6 @@ I suspect this has to do with pagination problems.
 * Including an `a` type in a column specifier generally makes the table overflow the page width and breaks layout.
 ** With a table formerly using `a`, paragraphs (from blank lines) make paged.js go into an infinite loop, although not from overflow.
 * Image:: refs must include the module and possibly component as they are likely to be pulled into a different module by inclusion.
+* highlighting conflicts with page break calculation, causing missing or repeating content at page breaks.
+* stem content here uses wrong script.  It might somehow be getting inserted several times.
+Need to put script in UI and detect stem in body-attributes-processor and set an attribute for the hbs.
