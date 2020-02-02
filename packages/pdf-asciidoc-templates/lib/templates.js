@@ -3,7 +3,7 @@
 const Opal = global.Opal
 // const fs = require('fs')
 // const ospath = require('path')
-const stemContent = require('./stem')
+// const stemContent = require('./stem')
 
 // const { layer: faLayer, icon: faIcon, dom: faDom, library: faLibrary } = require('@fortawesome/fontawesome-svg-core')
 const { layer: faLayer, icon: faIcon, library: faLibrary } = require('@fortawesome/fontawesome-svg-core')
@@ -191,8 +191,8 @@ ${tocHeader(baseConverter, node, transform, opts)}
 <div id="content" class="content">
   ${node.getContent()}
 </div>
-${footnotes(node)}
-${stemContent.content(node)}`
+${footnotes(node)}`
+      // ${stemContent.content(node)}`
     },
     admonition: (node, transform, opts) => {
       const idAttribute = node.getId() ? ` id="${node.getId()}"` : ''

@@ -1,5 +1,4 @@
-const fileUrl = require('file-url')
-const mathjaxFileUrl = fileUrl(require.resolve('mathjax/es5/tex-chtml-full.js'))
+'use strict'
 
 module.exports = {
   content: (node) => {
@@ -60,8 +59,7 @@ module.exports = {
   window.PagedConfig = window.PagedConfig || {}
   window.PagedConfig.before = () => mathJaxReadyPromise
 })()
-</script>
-<script type="text/javascript" src="${mathjaxFileUrl}"></script>`
+</script>`
     }
     return ''
   },
