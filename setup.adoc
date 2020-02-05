@@ -58,6 +58,8 @@ in e.g. `~/.profile`, `export ANTORA_DEV=~/projects/antora/antora/node_modules/.
 Get the `pdf-with-hbs` `antora-ui-default` branch from link:https://gitlab.com/djencks/antora-ui-default[my fork] and build it.
 You'll need the path to it for your playbook or command line.
 
+Alternatively the UI bundle may be available from `https://gitlab.com/djencks/antora-ui-default/-/jobs/artifacts/pdf-with-hbs/raw/build/ui-pdf-bundle.zip?job=bundle-stable`.
+
 == (Optional) Set up your playbook if you want a simpler command line
 
 ----
