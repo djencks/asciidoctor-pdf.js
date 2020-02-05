@@ -164,7 +164,7 @@ const outline = (baseConverter, node, transform, opts) => {
   if (node.hasSections() && node.hasAttribute('toc')) {
     return ''
   }
-  return `<div style="display: none;">${baseConverter.$convert_outline(node)}</div>`
+  return `<div style="display: none;">${baseConverter.$convert(node, 'outline', opts)}</div>`
 }
 
 const tocHeader = (baseConverter, node, transform, opts) => {
@@ -175,7 +175,7 @@ const tocHeader = (baseConverter, node, transform, opts) => {
     if (node.hasSections() && node.hasAttribute('toc') && hasTocPlacementHeader) {
       return `<div id="toc" class="${node.getAttribute('toc-class', 'toc')}">
 <div id="toctitle">${node.getAttribute('toc-title')}</div>
-${baseConverter.$convert_outline(node)}
+${baseConverter.$convert(node, 'outline', opts)}
 </div>`
     }
   }
@@ -339,7 +339,7 @@ ${titleElement}${node.getContent()}
       if (doc.isAttribute('toc-placement', 'preamble') && doc.hasSections() && doc.hasAttribute('toc')) {
         toc = `<div id="toc" class="${doc.getAttribute('toc-class', 'toc')}">
 <div id="toctitle">${doc.getAttribute('toc-title')}</div>
-${baseConverter.$convert_outline(doc)}
+${baseConverter.$convert(doc, 'outline')}
 </div>`
       } else {
         toc = ''
