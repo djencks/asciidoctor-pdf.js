@@ -91,12 +91,15 @@ pdfFiles:
 If this file is hidden (by the initial `\_`) it will be published anyway, with the initial `_` removed from the pdf name.
 
 For instance, you can take a nav.adoc file and convert the `* \xref::` to `include::`.
-Be sure to include e.g. `[lineoffset=1]`, where the lineoffset is most likely the number of `*` at the beginning of the line.
+Be sure to include e.g. `[lineoffset=+1]`, where the lineoffset is most likely the number of `*` at the beginning of the line.
+There are some comments on my experiences with this in link:creating-inclusion-files-from-nav.adoc[]
 
 == Html "Preview"
 
 The html that gets printed is written out in the normal spots in the site.
-By commenting out a couple lines in converter.js you can see the same thing Chromium does at `http://localhost:8081`
+As a page is loaded for conversion to pdf, the url is shown on the console.
+By setting the attribute `antoraPdfSuspendServer=true` on the command line with `--attribute ...` or in your playbook you can see the same thing Chromium does at `http://localhost:8081`
+This can be used to debug paged.js.
 
 == Next steps
 
@@ -130,11 +133,17 @@ I don't know how to predict an appropriate width percent: 90% has worked, some i
 * Background images on the title page don't work (? The SUSE manager pdfs have this, but I don't know how they do it).
 * TOC page numbers are sometimes 0.
 I suspect this has to do with pagination problems.
-* Intradocument links now work (at least for uyuni docs).
-* Outside-doc links generally get the site-url based url.
 * Including an `a` type in a column specifier generally makes the table overflow the page width and breaks layout.
 ** With a table formerly using `a`, paragraphs (from blank lines) make paged.js go into an infinite loop, although not from overflow.
 * Image:: refs must include the module and possibly component as they are likely to be pulled into a different module by inclusion.
-* highlighting conflicts with page break calculation, causing missing or repeating content at page breaks.
-* stem content here uses wrong script.  It might somehow be getting inserted several times.
-Need to put script in UI and detect stem in body-attributes-processor and set an attribute for the hbs.
+* The pdf outline shows what the problem is when it can't locate a section present in the html.
+Presumably this is an indication that content was left out of the pdf.
+
+== Recent solutions
+
+* Intradocument links now work (at least for uyuni docs).
+* Outside-doc links generally get the site-url based url.
+* Stem content doesn't appear to work with Antora default UI anyway.
+If you need stem content, use the asciidoctor-mathjax extension (soon to be at github) and render your stem content to inline svgs on the server.
+* highlighting should now be taking place server-side with the asciidoctor-highlight.js extension.
+It's not clear to me that it is working, however.

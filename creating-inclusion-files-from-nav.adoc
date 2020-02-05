@@ -1,0 +1,172 @@
+= Notes on attempts to generate inclusion files from nav files and other needed transformations.
+
+From which you can deduce my lack of shell-fu!
+
+== history from first attempt, uyuni docs
+
+[bash]
+----
+  599  find modules -name nav-*.adoc|sed /nav-/pages/_pdf-/g
+  600  find modules -name nav-*.adoc|sed /nav-/pages\/_pdf-/g
+  601  find modules -name nav-*.adoc|sed /nav-/pages\\/_pdf-/g
+  602  find modules -name nav-*.adoc|sed s/nav-/pages\/_pdf-/g
+  603  find modules -name nav-*.adoc|sed s/nav-/pages\/\_pdf-/g
+  604  find modules -name nav-*.adoc|sed s/nav-/pages\/pdf-/g
+  605  find modules -name nav-*.adoc|sed s/nav-/pages\\/pdf-/g
+  606  find modules -name nav-*.adoc|sed s/nav-/pages\\/_pdf-/g
+  607  find modules -name nav-*.adoc|xargs -0 -I % sed s/nav-/pages\\/_pdf-/g %
+  608  find modules -name nav-*.adoc|xargs -0 -I %  % |sed s/nav-/pages\\/_pdf-/g
+  609  find modules -name nav-*.adoc|xargs -0 xargs -0 bash -c 'for filename; do sed s/nav-/pages\\/_pdf-/g "$filename";
+  610  find modules -name nav-*.adoc|xargs -0 xargs -0 bash -c 'for filename; do echo $filename | sed s/nav-/pages\\/_pdf-/g;
+  614  find modules -name nav-*.adoc|xargs -I % echo % | sed s/nav-/pages\\/_pdf-/g
+  615  find modules -name nav-*.adoc|xargs -I %  cp % `echo % | sed s/nav-/pages\\/_pdf-/g`
+  616  find modules -name nav-*.adoc|xargs -I %  cp % `echo % | sed s/nav-/pages\\\\/_pdf-/g`
+  617  find modules -name nav-*.adoc|xargs -I % `echo % | sed s/nav-/pages\\/_pdf-/g`
+  618  find modules -name nav-*.adoc|xargs -I % `echo % | sed s/nav-/pages\\\\/_pdf-/g`
+  619  find modules -name nav-*.adoc|xargs -I % echo % | sed s/nav-/pages\\/_pdf-/g
+  628  find modules -name _pdf-*.adoc|xargs sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial$entities/g
+  629  find modules -name _pdf-*.adoc|xargs sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\\$entities/g |grep entities
+  630  find modules -name _pdf-*.adoc|xargs sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$entities/g |grep entities
+  631  find modules -name _pdf-*.adoc|xargs sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g |grep entities
+  632  find modules -name _pdf-*.adoc|xargs -I %  sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g % |grep entities
+  636  find modules -name _pdf-*.adoc|xargs -I %  sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g % > %
+  638  find modules -name _pdf-*.adoc|xargs -I %  % < sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g %
+  639  find modules -name _pdf-*.adoc|xargs -n 1 -I %  sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g % > %
+  643  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g % > %
+  644  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g %
+  646  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  % < sed s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g %
+  647  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g %
+  650  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i -e s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g %
+  655  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i s/include::modules\\/~[\\/]*\\/pages/include::/g %
+  656  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed s/include::modules\\/~[\\/]*\\/pages/include::/g %
+  657  sed s/include::modules\/~[\/]*\/pages/include::/g modules/reference/pages/_pdf-reference-manual.adoc
+  658  sed s/include::modules\\/~[\\/]*\\/pages/include::/g modules/reference/pages/_pdf-reference-manual.adoc
+  659  sed s/include::modules\\/.*\\/pages/include::/g modules/reference/pages/_pdf-reference-manual.adoc
+  660  sed s/include::modules\\/.*\\/pages\\//include::/g modules/reference/pages/_pdf-reference-manual.adoc
+  661  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i -e s/include::modules\\/.*\\/pages\\//include::/g %
+  666  sed "0,/ifdef::backend-pdf[]/d modules/upgrade/pages/_pdf-upgrade-guide.adoc
+  667  sed "0,/ifdef::backend-pdf[]/d" modules/upgrade/pages/_pdf-upgrade-guide.adoc
+  668  sed "0,/ifdef::backend-pdf/d" modules/upgrade/pages/_pdf-upgrade-guide.adoc
+  669  sed "1,/ifdef::backend-pdf/d" modules/upgrade/pages/_pdf-upgrade-guide.adoc
+  670  sed "1,/ifdef::backend-pdf/d" "/^endif/d" modules/upgrade/pages/_pdf-upgrade-guide.adoc
+  671  sed "1,/ifdef::backend-pdf/d"; "/^endif/d" modules/upgrade/pages/_pdf-upgrade-guide.adoc
+  672  find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i -e "1,/ifdef::backend-pdf/d" %
+  684  find modules -name _pdf-*.adoc |sed s/modules/.*/pages//g
+  685  find modules -name _pdf-*.adoc |sed s/modules\\/.*\\/pages\\//g
+  686  find modules -name _pdf-*.adoc |sed s/modules\\/.*\\/pages\\///g
+  687  find modules -name _pdf-*.adoc |sed s/modules\\/(.*)\\/pages\\//${1}:/g
+  688  find modules -name _pdf-*.adoc |sed s/modules\\/(.*)\\/pages\\//\1:/g
+  689  find modules -name _pdf-*.adoc |sed "s/modules\\/(.*)\\/pages\\//\1:/g"
+  690  find modules -name _pdf-*.adoc |sed "s/modules\\/\(.*\)\\/pages\\//\1:/g"
+  691  find modules -name _pdf-*.adoc |sed "s/modules\\/\(.*\)\\/pages\\//- \1:/g"
+  692  find modules -name _pdf-*.adoc |sed "s/modules\\/\(.*\)\\/pages\\//  - \1:/g"
+----
+
+== Likely useful commands:
+
+=== create a _ pdf file for each nav file by copying
+
+* uyuni-docs
+...
+find modules -name nav-*.adoc|xargs -I %  cp % `echo % | sed s/nav-/pages\\\\/_pdf-/g`
+...
+
+actually I did this by hand
+
+* isis
+...
+find . -name *-nav.adoc |sed -E "s/(.*)-nav(.*)/\1-nav\2 \1-pdf\2/g"|xargs -L 1 cp
+...
+This works!
+Use sed to construct the args to cp from the find command, and xargs to apply cp to them.
+
+=== Transform an explicit entry found in many files:
+
+* uyuni-docs
+...
+find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i -e s/include::.\\/branding\\/pdf\\/entities/include::ROOT:partial\$pdf-entities/g %
+...
+
+=== Transform most entries
+
+* uyuni-docs
+...
+find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i -e s/include::modules\\/.*\\/pages\\//include::/g %
+...
+
+* Isis
+...
+find . -name *-pdf.adoc|xargs -t -n 1 -I %  sed -i -e s/-nav.adoc/-pdf.adoc/g %
+find . -name *-pdf.adoc|xargs -t -n 1 -I %  sed -i -e s/xref:/include::/g %
+...
+
+list entry to section title and include
+done at rev 7ecf19f8395ab8eda8078bc8742d6a78aeb8188e
+...
+find . -name *-pdf.adoc|xargs -t -n 1 -I %  sed -E -i -e 's/^\*\*\* (.*)\[(.*)\]$/=== \2\
+\1[leveloffset=+3]/g' %
+find . -name *-pdf.adoc|xargs -t -n 1 -I %  sed -E -i -e 's/^\*\* (.*)\[(.*)\]$/== \2\
+\1[leveloffset=+2]/g' %
+find . -name *-pdf.adoc|xargs -t -n 1 -I %  sed -E -i -e 's/^\* (.*)\[(.*)\]$/= \2\
+\1[leveloffset=+1]/g' %
+...
+
+
+sed -E -e 's/^\*\*\* (.*)\[(.*)\]$/=== \2\
+\1[leveloffset=+3]/g' ./api/applib/src/main/adoc/modules/applib-svc/partials/module-pdf.adoc
+
+
+=== Remove backup files, git commands
+
+* Isis
+...
+find . -name *-pdf.adoc-e|xargs rm
+git add **/*-pdf.adoc
+...
+
+=== Remove up to a matched line
+
+* uyuni-docs
+...
+find modules -name _pdf-*.adoc|xargs -t -n 1 -I %  sed -i -e "1,/ifdef::backend-pdf/d" %
+...
+
+=== Replace path `modules/\{moduleName}/pages` with `\{moduleName}:`
+
+* uyuni-docs
+...
+find modules -name _pdf-*.adoc |sed "s/modules\\/(.*)\\/pages\\//\1:/g"
+...
+
+
+== Editing source
+
+=== removing 'a' column specifiers (isis)
+
+Column specs such as [cols="2,4a,1,1", options="header"] seem to break pdf rendering.
+
+find . -name '*.adoc'| xargs grep '[0-9]a[,"]'
+
+find . -name '*.adoc'|xargs -t -n 1 -I %  sed -E -i -e 's/([0-9])a([,"])/\1\2/g' %
+
+
+fixup module name into image::
+
+model for how to use sed:
+
+find . -name *-nav.adoc |sed -E "s/(.*)-nav(.*)/\1-nav\2 \1-pdf\2/g"|xargs -L 1 cp
+----
+
+find . -name '*.adoc' -not -name 'nav.adoc' -not -name '*-pdf.adoc' -not -name '*-nav.adoc' -path '*/src/main/adoc/modules/*'|sed -E 's/(.*\/modules\/)(.*)(\/pages\/.*)/one\1 module \2 three\3/g'
+find . -name '*.adoc'|sed -E 's/(.*\/modules\/)(.*)(\/pages\/.*)/one\1 module \2 three\3/g'
+
+
+find . -name '*.adoc' -not -name 'nav.adoc' -not -name '*-pdf.adoc' -not -name '*-nav.adoc' -path '*/src/main/adoc/modules/*'|sed -E 's/(.*\/modules\/)(.*)(\/pages\/.*)/s\/image::(.*)\\[\/image::\2:\\1\/g \1\2\3/g'
+
+find . -name '*.adoc' -not -name 'nav.adoc' -not -name '*-pdf.adoc' -not -name '*-nav.adoc' -path '*/src/main/adoc/modules/*'|sed -E 's/(.*\/modules\/)(.*)(\/pages\/.*)/'\''s\/image::(.*)\\[\/image::\2:\\1\/g'\'' \1\2\3/g'|xargs -L 1 -I %  sed -E -i -e %
+
+
+find . -name '*.adoc' -not -name 'nav.adoc' -not -name '*-pdf.adoc' -not -name '*-nav.adoc' -path '*/src/main/adoc/modules/*'|sed -E 's/(.*\/modules\/)(.*)(\/pages\/.*)/'\''s\/image::(.*)\\[\/image::\2:\\1\/g'\'' \1\2\3/g'|xargs -L 1 -I %  echo %
+
+gave up on escaping nested single quotes and consctructed a script file, edited to add sed command and ':
+find . -name '*.adoc' -not -name 'nav.adoc' -not -name '*-pdf.adoc' -not -name '*-nav.adoc' -path '*/src/main/adoc/modules/*'|sed -E 's/(.*\/modules\/)(.*)(\/pages\/.*)/s\/image::(.*)\\[\/image::\2:\\1\/g \1\2\3/g' >cmd.sh
