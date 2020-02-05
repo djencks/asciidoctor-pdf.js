@@ -12,6 +12,7 @@ const classifyContent = require('@antora-pdf/pdf-content-classifier')
 const convertToPdf = require('@antora-pdf/pdf-renderer')
 const pdfTemplate = require('@antora-pdf/pdf-asciidoc-templates')
 const { bodyAttributesProcessor, includeProcessor } = require('@antora-pdf/pdf-asciidoc-templates')
+const highlighter = require('asciidoctor-highlight.js')
 
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)
@@ -22,6 +23,7 @@ async function generateSite (args, env) {
   ])
   if (!asciidocConfig.extensions) asciidocConfig.extensions = []
   asciidocConfig.extensions.push(bodyAttributesProcessor)
+  asciidocConfig.extensions.push(highlighter)
   if (!asciidocConfig.converters) asciidocConfig.converters = []
   asciidocConfig.converters.push(pdfTemplate)
   asciidocConfig.includeProcessor = includeProcessor
@@ -30,7 +32,7 @@ async function generateSite (args, env) {
   const navigationCatalog = buildNavigation(contentCatalog, asciidocConfig)
   const composePage = createPageComposer(playbook, contentCatalog, uiCatalog, env)
   pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
-  const pdfPages = await convertToPdf(pages, [contentCatalog, uiCatalog])
+  const pdfPages = await convertToPdf(pages, [contentCatalog, uiCatalog], asciidocConfig)
   pdfPages.filter((pdf) => pdf).map((pdf) => contentCatalog.addFile(pdf))
   return publishSite(playbook, [contentCatalog, uiCatalog])
 }

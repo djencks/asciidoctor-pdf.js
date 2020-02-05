@@ -7,17 +7,19 @@ const { addOutline } = require('./outline.js')
 const { addMetadata } = require('./metadata')
 const server = require('./server')
 
-async function convertToPdf (pages, catalogs) {
+async function convertToPdf (pages, catalogs, asciidocConfig) {
   const { browser, server } = await setup(catalogs)
   let result
   try {
     const limit = pLimit(10)
     result = await Promise.all(pages.map((file) => limit(() => convert(file, browser))))
   } finally {
-    //If you comment out the next two lines, Antora will "keep running"
-    //and you can see the html version of pages by pointing to localhost:8081/...
-    await browser.close()
-    await server.close()
+    if (asciidocConfig.attributes.antoraPdfSuspendServer) {
+      console.log('server suspended, press ctrl-c to exit')
+    } else {
+      await browser.close()
+      await server.close()
+    }
   }
   return result
 }
