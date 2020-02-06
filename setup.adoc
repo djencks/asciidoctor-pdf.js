@@ -17,6 +17,7 @@ Current output:
 === The simple way
 
 * Get the script setup.sh from https://github.com/djencks/asciidoctor-pdf.js/blob/antora/setup.sh
+** e.g. `curl https://raw.githubusercontent.com/djencks/asciidoctor-pdf.js/antora/setup.sh>setup.sh`
 * Run it `. setup.sh`.
 Running `./setup.sh` will not export some handy commands, but you can define them yourself.
 
