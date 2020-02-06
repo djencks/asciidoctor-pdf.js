@@ -14,70 +14,29 @@ Current output:
 
 == How to set this up
 
-The (relative) paths shown in this guide all reflect the relative project layouts on my system.
+=== The simple way
 
+* Get the script setup.sh from https://github.com/djencks/asciidoctor-pdf.js/blob/antora/setup.sh
+* Run it `. setup.sh`.
+Running `./setup.sh` will not export some handy commands, but you can define them yourself.
+
+This will:
+
+* clone the 3 git repositories involved
+* use yarn to install dependencies and set up the antora/asciidoctor-pdf.js monorepo
+* use npm and gulp to set up and build antora-ui-default
+* define two shell commands that are useful for running antora-pdf.
+
+After this, you should be able to run
 ----
-~/projects/antora/antora
-~/projects/asciidoctor/asciidoctor-pdf.js
+$ANTORA_PDF_CMD <path-to-playbook>
 ----
+and generate a pdf-per-page in an existing Antora project.
 
-You will need to adjust paths to suit the project locations you choose.
+=== The complicated way
 
-=== Antora
+The original setup instructions are now at the xref:#_original_complicated_setup_instructions[end of this guide].
 
-You need a local copy of Antora with several MRs applied.
-
-* link:https://gitlab.com/antora/antora/merge_requests/423[Upgrade to Asciidoctor.js 2.0.x]
-* link:https://gitlab.com/antora/antora/merge_requests/440[Allow a custom converter to replace/override the default HTML5 converter]
-* A fix for link:https://gitlab.com/antora/antora/issues/552[cli should allow specifying UI start_path as well as the UI bundle itself]
-
-The plausible way to get this is by cloning my link:https://gitlab.com/djencks/antora[Antora fork] and checking out the `issue-522-347-548-asciidoctor-2-delegating-converters-explicit-converters` branch.
-Note the name of this branch no longer reflects it's contents.
-
-=== This project, asciidoctor-pdf.js, antora branch
-
-After you've cloned (from my fork) and switched to this branch, modify this projects root package.json to link the projects.
-The monorepo configuration is at the end of package.json:
-
-----
-"workspaces": [
-    "packages/*",
-    "../../antora/antora/packages/*"
-  ]
-----
-
-Modify the second line to contain the relative path between projects in your installation.
-Finally run yarn in this project to set up the monorepo here.
-
-== Set up a way to run your local copy of antora
-
-in e.g. `~/.profile`, `export ANTORA_DEV=~/projects/antora/antora/node_modules/.bin/antora`
-
-== UI
-
-Get the `pdf-with-hbs` `antora-ui-default` branch from link:https://gitlab.com/djencks/antora-ui-default[my fork] and build it.
-You'll need the path to it for your playbook or command line.
-
-Alternatively the UI bundle may be available from `https://gitlab.com/djencks/antora-ui-default/-/jobs/artifacts/pdf-with-hbs/raw/build/ui-pdf-bundle.zip?job=bundle-stable`.
-
-== (Optional) Set up your playbook if you want a simpler command line
-
-----
-ui:
-  bundle:
-    url: ./../../../antora-ui-default/build/ui-pdf-bundle.zip
-    snapshot: true
-    start_path: pdf
-----
-
-== Running
-
-A typical command line in this directory, specifying both UI bundle and start_path:
-----
- $ANTORA_DEV ../../antora/simple-examples/multiple-components/xrefs/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator  --ui-bundle-url ../../antora/antora-ui-default/build/ui-pdf-bundle.zip --ui-start-path pdf
-----
-
-The pipeline module must be referred to with a local file path.
 
 == Configuration
 
@@ -149,3 +108,70 @@ Presumably this is an indication that content was left out of the pdf.
 If you need stem content, use the asciidoctor-mathjax extension (soon to be at github) and render your stem content to inline svgs on the server.
 * highlighting should now be taking place server-side with the asciidoctor-highlight.js extension.
 It's not clear to me that it is working, however.
+
+== Original complicated setup instructions
+
+The (relative) paths shown in this guide all reflect the relative project layouts on my system.
+
+----
+~/projects/antora/antora
+~/projects/asciidoctor/asciidoctor-pdf.js
+----
+
+You will need to adjust paths to suit the project locations you choose.
+
+=== Antora
+
+You need a local copy of Antora with several MRs applied.
+
+* link:https://gitlab.com/antora/antora/merge_requests/423[Upgrade to Asciidoctor.js 2.0.x]
+* link:https://gitlab.com/antora/antora/merge_requests/440[Allow a custom converter to replace/override the default HTML5 converter]
+* A fix for link:https://gitlab.com/antora/antora/issues/552[cli should allow specifying UI start_path as well as the UI bundle itself]
+
+The plausible way to get this is by cloning my link:https://gitlab.com/djencks/antora[Antora fork] and checking out the `issue-522-347-548-asciidoctor-2-delegating-converters-explicit-converters` branch.
+Note the name of this branch no longer reflects it's contents.
+
+=== This project, asciidoctor-pdf.js, antora branch
+
+After you've cloned (from my fork) and switched to this branch, modify this projects root package.json to link the projects.
+The monorepo configuration is at the end of package.json:
+
+----
+"workspaces": [
+    "packages/*",
+    "../../antora/antora/packages/*"
+  ]
+----
+
+Modify the second line to contain the relative path between projects in your installation.
+Finally run yarn in this project to set up the monorepo here.
+
+== Set up a way to run your local copy of antora
+
+in e.g. `~/.profile`, `export ANTORA_DEV=~/projects/antora/antora/node_modules/.bin/antora`
+
+== UI
+
+Get the `pdf-with-hbs` `antora-ui-default` branch from link:https://gitlab.com/djencks/antora-ui-default[my fork] and build it.
+You'll need the path to it for your playbook or command line.
+
+Alternatively the UI bundle may be available from `https://gitlab.com/djencks/antora-ui-default/-/jobs/artifacts/pdf-with-hbs/raw/build/ui-pdf-bundle.zip?job=bundle-stable`.
+
+== (Optional) Set up your playbook if you want a simpler command line
+
+----
+ui:
+  bundle:
+    url: ./../../../antora-ui-default/build/ui-pdf-bundle.zip
+    snapshot: true
+    start_path: pdf
+----
+
+== Running
+
+A typical command line in this directory, specifying both UI bundle and start_path:
+----
+ $ANTORA_DEV ../../antora/simple-examples/multiple-components/xrefs/antora-playbook.yml  --stacktrace --generator ./node_modules/\@antora-pdf/pdf-generator  --ui-bundle-url ../../antora/antora-ui-default/build/ui-pdf-bundle.zip --ui-start-path pdf
+----
+
+The pipeline module must be referred to with a local file path.
