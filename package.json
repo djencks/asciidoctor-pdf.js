@@ -45,6 +45,6 @@
   },
   "workspaces": [
     "packages/*",
-    "../../antora/antora/packages/*"
+    "../antora/packages/*"
   ]
 }
