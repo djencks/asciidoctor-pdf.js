@@ -107,8 +107,8 @@ Presumably this is an indication that content was left out of the pdf.
 * Outside-doc links generally get the site-url based url.
 * Stem content doesn't appear to work with Antora default UI anyway.
 If you need stem content, use the asciidoctor-mathjax extension (soon to be at github) and render your stem content to inline svgs on the server.
-* highlighting should now be taking place server-side with the asciidoctor-highlight.js extension.
-It's not clear to me that it is working, however.
+* highlighting is now taking place server-side with the asciidoctor-highlight.js extension.
+It works with at least javascript.
 
 == Original complicated setup instructions
 

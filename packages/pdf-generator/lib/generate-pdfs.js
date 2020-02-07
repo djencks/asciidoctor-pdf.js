@@ -24,6 +24,7 @@ async function generateSite (args, env) {
   if (!asciidocConfig.extensions) asciidocConfig.extensions = []
   asciidocConfig.extensions.push(bodyAttributesProcessor)
   asciidocConfig.extensions.push(highlighter)
+  asciidocConfig.attributes['source-highlighter'] = 'highlightjs-ext'
   if (!asciidocConfig.converters) asciidocConfig.converters = []
   asciidocConfig.converters.push(pdfTemplate)
   asciidocConfig.includeProcessor = includeProcessor
